@@ -2,7 +2,7 @@
 
 
 Cntributors:
-Gulala Aris-Sorran
+Gulala Mixail-Aristeidis
 Pantelis Dimitrios
 Tsompanakis Georgios
 Theodosopoulos Christoforos
