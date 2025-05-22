@@ -1,0 +1,86 @@
+actor User
+participant OppSearchScreen
+participant BookingScreen
+participant ParticipFormScreen
+participant ConfPartScreen
+participant MyBookingsScreen
+participant Participation
+participant NotFoundOppScreen
+database DataBase
+
+activate User
+User->OppSearchScreen:searchOpponent()
+activate OppSearchScreen
+
+
+alt FoundOpponent
+OppSearchScreen->DataBase:checkBookings()
+activate DataBase
+
+deactivate OppSearchScreen
+activate BookingScreen
+BookingScreen<--DataBase:returnListAvailBookings()
+BookingScreen<-DataBase:display()
+deactivate DataBase
+deactivate BookingScreen
+
+
+  alt SelectBooking
+    User->BookingScreen:selectBooking()
+
+    create ParticipFormScreen
+    activate ParticipFormScreen
+    BookingScreen->ParticipFormScreen:<create>
+    BookingScreen->ParticipFormScreen:displayForm()
+
+
+      else NotSelectedBooking
+        create MyBookingsScreen
+        activate MyBookingsScreen
+        User->OppSearchScreen:selectNoBooking()
+        OppSearchScreen-->MyBookingsScreen:<create>
+        OppSearchScreen->MyBookingsScreen:displayMyBookings()
+        activate BookingScreen
+
+        BookingScreen<-MyBookingsScreen:addBookingList()
+        activate DataBase
+        MyBookingsScreen->DataBase:changeBookingStatus()
+        deactivate DataBase
+
+        deactivate MyBookingsScreen
+        deactivate BookingScreen
+end
+
+
+activate BookingScreen
+User->ParticipFormScreen:selectnumofpeople()
+
+activate DataBase
+ParticipFormScreen->DataBase:changeBookingStatus()
+deactivate ParticipFormScreen
+deactivate DataBase
+
+else NotFoundOpponent
+  create NotFoundOppScreen
+  activate NotFoundOppScreen
+  OppSearchScreen-->NotFoundOppScreen:<create>
+  OppSearchScreen->NotFoundOppScreen:displaymessage()
+  activate DataBase
+  NotFoundOppScreen->DataBase:changeBookingStatus()
+  deactivate DataBase
+end
+
+create Participation
+activate Participation
+activate ParticipFormScreen
+
+ParticipFormScreen-->Participation:<create>
+ParticipFormScreen->Participation:displayParticipation()
+deactivate Participation
+
+create ConfPartScreen
+activate ConfPartScreen
+ParticipFormScreen-->ConfPartScreen:<create>
+ParticipFormScreen->ConfPartScreen:confMessage()
+deactivate ConfPartScreen
+deactivate ParticipFormScreen
