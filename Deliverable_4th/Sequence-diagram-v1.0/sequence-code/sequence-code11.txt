@@ -1,0 +1,100 @@
+actor User
+participant MainScreen
+participant TournSearchScreen
+participant TournFormPartScreen
+participant NoTournAvailScreen
+participant AlreadyPartScreen
+participant ConfPartTournScreen
+participant Tournament
+participant EmailDataPart
+
+
+participant ListUsersOfUpcomingTourn
+database Database
+
+
+activate User
+activate MainScreen
+
+User->MainScreen:loginToApp()
+activate TournSearchScreen
+MainScreen->TournSearchScreen:participateToTourn()
+MainScreen->TournSearchScreen:displayInfo()
+deactivate MainScreen
+
+alt AvailableTournaments
+
+User->TournSearchScreen:selectTourn()
+deactivate TournSearchScreen
+activate TournFormPartScreen
+
+TournSearchScreen->TournFormPartScreen:goTo()
+
+User->TournFormPartScreen:enterTournDetails()
+else 
+
+
+create NoTournAvailScreen
+activate NoTournAvailScreen
+
+TournFormPartScreen-->NoTournAvailScreen:<create>
+TournFormPartScreen->NoTournAvailScreen:display()
+NoTournAvailScreen->NoTournAvailScreen:selection_NotificationForFutureTourn()
+User->NoTournAvailScreen:selectToNotify()
+activate Database
+NoTournAvailScreen-->Database:enterUserData()
+activate MainScreen
+MainScreen<--NoTournAvailScreen:returnToMainScreen()
+deactivate MainScreen
+deactivate Database
+deactivate NoTournAvailScreen
+
+
+end
+
+alt CorrectTournDetails
+
+activate Database
+TournFormPartScreen->Database:checkTournDetails()
+TournFormPartScreen<--Database:return Validation()
+deactivate Database
+
+User->TournFormPartScreen:completeForm&Submit()
+create Tournament
+activate Tournament
+
+TournFormPartScreen-->Tournament:<create>
+deactivate Tournament
+else DuplicateTournDetails
+
+create AlreadyPartScreen
+activate AlreadyPartScreen
+
+TournFormPartScreen-->AlreadyPartScreen:<create>
+TournFormPartScreen->AlreadyPartScreen:displayMessage()
+activate EmailDataPart
+AlreadyPartScreen->EmailDataPart:sendConfirmEmail()
+deactivate EmailDataPart
+activate MainScreen
+MainScreen<--AlreadyPartScreen:returnToMainScreen()
+deactivate AlreadyPartScreen
+deactivate MainScreen
+
+end
+
+activate EmailDataPart
+deactivate TournFormPartScreen
+User<--EmailDataPart:sendConfirmEmail()
+activate Database
+EmailDataPart->Database:UpdatePartStatus()
+deactivate Database
+deactivate EmailDataPart
+activate TournSearchScreen
+create ConfPartTournScreen
+
+
+activate ConfPartTournScreen
+TournSearchScreen-->ConfPartTournScreen:<create>
+TournSearchScreen<-ConfPartTournScreen:displayMessage()
+deactivate ConfPartTournScreen
+deactivate TournSearchScreen
