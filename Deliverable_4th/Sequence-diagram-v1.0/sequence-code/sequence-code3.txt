@@ -1,0 +1,61 @@
+actor user
+participant LoginScreen
+participant SportsMenuSceen
+participant CourtsScreeen
+participant AvailableCourtsScreen
+participant NotAvailableCourtScreen
+participant DatabaseManager
+
+user->LoginScreen:login()
+activate LoginScreen
+
+LoginScreen->SportsMenuSceen:display()
+activate SportsMenuSceen
+user->SportsMenuSceen:chooseSport()
+deactivate LoginScreen
+SportsMenuSceen->CourtsScreeen:display()
+activate CourtsScreeen
+deactivate SportsMenuSceen
+user->CourtsScreeen:infoCourts()
+user->CourtsScreeen:applyFilter()
+CourtsScreeen->AvailableCourtsScreen:showAvailableCourt
+activate AvailableCourtsScreen
+deactivate CourtsScreeen
+user->AvailableCourtsScreen:chooseCourt()
+AvailableCourtsScreen->DatabaseManager:isAvailable()
+activate DatabaseManager
+AvailableCourtsScreen<--DatabaseManager:returnAvailabilitySubmitted()
+deactivate DatabaseManager
+deactivate AvailableCourtsScreen
+alt altcase 1
+SportsMenuSceen->CourtsScreeen:display()
+activate CourtsScreeen
+activate SportsMenuSceen
+user->CourtsScreeen:viewByregion()
+CourtsScreeen->AvailableCourtsScreen:showAvailableCourts()
+activate AvailableCourtsScreen
+deactivate SportsMenuSceen
+deactivate CourtsScreeen
+else altcase 2 
+deactivate AvailableCourtsScreen
+SportsMenuSceen->CourtsScreeen:display()
+activate SportsMenuSceen
+activate CourtsScreeen
+user->CourtsScreeen:byRegion()
+deactivate SportsMenuSceen
+CourtsScreeen-->NotAvailableCourtScreen:create()
+CourtsScreeen->NotAvailableCourtScreen:display()
+activate NotAvailableCourtScreen
+deactivate CourtsScreeen 
+else altcase 3 
+deactivate NotAvailableCourtScreen
+SportsMenuSceen->CourtsScreeen:display()
+activate SportsMenuSceen
+activate CourtsScreeen
+user->CourtsScreeen:byRegion()
+deactivate SportsMenuSceen
+CourtsScreeen->AvailableCourtsScreen:showAvailableCourts()
+activate AvailableCourtsScreen
+deactivate CourtsScreeen
+end
+deactivate AvailableCourtsScreen
