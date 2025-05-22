@@ -1,0 +1,101 @@
+actor userc
+participant courtScreen
+participant courtPage
+participant ratingForm
+participant ratingScreen
+participant ratingConfirmationScreen
+participant rateEditingForm
+participant myRatingScreen
+participant ratingConfirmationOfDeletionScreen
+database db
+
+entryspacing 0.8
+user->courtScreen:chooseCourt()
+activate courtScreen
+
+courtScreen->courtPage:display()
+deactivate courtScreen
+activate courtPage
+
+user->courtPage:                                  rateCourt()
+
+
+courtPage->ratingForm:display()
+deactivate courtPage
+activate ratingForm
+user->ratingForm:insertData()
+
+ratingForm->db:checkData()
+activate db
+ratingForm<--db:returnCheckData()
+
+ratingForm->db:publishRating()
+deactivate ratingForm
+deactivate db
+
+user->ratingScreen:seesRating()
+activate ratingScreen
+
+alt altcase 1
+courtPage->ratingScreen:display()
+activate courtPage
+
+db->ratingScreen:fetchData()
+deactivate courtPage
+activate db
+
+user->ratingScreen:reportRating()
+activate user
+
+ratingScreen->db:check()
+deactivate user
+
+ratingScreen<--db:returnCheck()
+deactivate db
+deactivate ratingScreen
+
+else case 2 
+
+courtScreen->myRatingScreen:display()
+activate myRatingScreen
+
+activate courtScreen
+db->myRatingScreen:fetchData()
+deactivate courtScreen
+activate db
+user->myRatingScreen:editRating()
+activate user
+myRatingScreen->rateEditingForm:display()
+
+activate rateEditingForm
+deactivate myRatingScreen
+
+user->rateEditingForm:editingRating()
+deactivate user
+
+rateEditingForm->db:publishRating()
+
+ratingConfirmationScreen<-db:ratingConfirmed
+activate ratingConfirmationScreen
+deactivate db
+deactivate rateEditingForm
+
+else case 3 
+deactivate ratingConfirmationScreen
+courtScreen->myRatingScreen:display()
+activate courtScreen 
+activate myRatingScreen
+
+db->myRatingScreen:fetchData()
+deactivate courtScreen
+
+user->myRatingScreen:deleteRating
+activate user
+
+
+myRatingScreen->db:publishRating
+activate db
+deactivate user
+end
+deactivate db
+deactivate myRatingScreen
