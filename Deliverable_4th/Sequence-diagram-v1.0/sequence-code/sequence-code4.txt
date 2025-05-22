@@ -1,146 +1,137 @@
 actor User
-participant SearchFieldScreen
-participant ResultsFieldSearchScreen
+participant CourtsScreen
+participant ManageCourtClass
 participant DateAndTimeScreen
-participant NumOfPerScreen
+participant ManageDateAndTimeClass
 participant NoFreeHoursScreen
-participant MaximumNumOfPerScreen
+participant NumOfPersonScreen
+participant ManagePersonClass
+participant TooManyPersonsScreen
 participant PaymentMethodScreen
-participant PayingStageCompleted
-participant Booking
-participant ConfEmail
-participant DBManager
+participant ManagePaymentClass
+participant SuccessPaymentScreen
+participant BookingScreen
+participant ManageBookingClass
+participant DataBaseManager
 
-    activate User
-User->SearchFieldScreen:proceedToSearch()
-activate SearchFieldScreen
+participant ManageBookingClass
 
-SearchFieldScreen -> DBManager:searchField()
-    deactivate SearchFieldScreen
-    activate DBManager
-ResultsFieldSearchScreen<--DBManager:returnAvailFields()
-
-    activate ResultsFieldSearchScreen
-    deactivate DBManager
-User->ResultsFieldSearchScreen:selectField()
-
-DBManager <- DateAndTimeScreen:checkAvailDateAndTime()
-  create DateAndTimeScreen
-  ResultsFieldSearchScreen->DateAndTimeScreen:goTo()
-    deactivate ResultsFieldSearchScreen
-
+ManageCourtClass->CourtsScreen:display()
+activate ManageCourtClass
+activate CourtsScreen
+CourtsScreen->ManageCourtClass:getCourts()
+deactivate CourtsScreen
+ManageCourtClass->DataBaseManager:queryCourts()
+activate DataBaseManager
+DataBaseManager-->ManageCourtClass:return results
+deactivate DataBaseManager
+ManageCourtClass->CourtsScreen:showResults()
+activate CourtsScreen
+User->CourtsScreen:Choose Court
+CourtsScreen->ManageCourtClass:setChoice()
+deactivate CourtsScreen
+ManageCourtClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->ManageCourtClass:return success message
+deactivate DataBaseManager
+ManageCourtClass->DateAndTimeScreen:display()
 activate DateAndTimeScreen
-
-User -> DateAndTimeScreen:selectDate()
-
-    activate DBManager
+deactivate ManageCourtClass
+User->DateAndTimeScreen:Choose Date
+DateAndTimeScreen->ManageDateAndTimeClass:setDate()
+activate ManageDateAndTimeClass
+ManageDateAndTimeClass->DataBaseManager:submitDate()
+activate DataBaseManager
+DataBaseManager-->ManageDateAndTimeClass:return available hours
+deactivate DataBaseManager
+ManageDateAndTimeClass->DateAndTimeScreen:showResults()
 
 alt Available Hours
+User->DateAndTimeScreen:Choose Time
+DateAndTimeScreen->ManageDateAndTimeClass:setTime()
+ManageDateAndTimeClass->DataBaseManager:submitTime()
+activate DataBaseManager
+DataBaseManager-->ManageDateAndTimeClass:return success message
+deactivate DataBaseManager
+ManageDateAndTimeClass->DateAndTimeScreen:showResults()
+deactivate DateAndTimeScreen
+
+deactivate ManageDateAndTimeClass
+else No available Hours
+activate DateAndTimeScreen
+activate ManageDateAndTimeClass
+DateAndTimeScreen-->*NoFreeHoursScreen:<create>
+deactivate DateAndTimeScreen
+activate NoFreeHoursScreen
+ManageDateAndTimeClass->NoFreeHoursScreen:display()
+deactivate ManageDateAndTimeClass
+deactivate NoFreeHoursScreen
+end
+
+activate ManageDateAndTimeClass
+ManageDateAndTimeClass->NumOfPersonScreen:display()
+deactivate ManageDateAndTimeClass
+activate NumOfPersonScreen
+
+alt Select Persons
+User->NumOfPersonScreen:Choose Number of Persons
+NumOfPersonScreen->ManagePersonClass:setNumber()
+activate ManagePersonClass
+ManagePersonClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->ManagePersonClass:return success mesage
+deactivate DataBaseManager
+ManagePersonClass->NumOfPersonScreen:showResults()
+deactivate NumOfPersonScreen
+deactivate ManagePersonClass
 
 
-   deactivate DBManager
-
-
-DBManager --> DateAndTimeScreen:returnAvailHours()
-DateAndTimeScreen->*NumOfPerScreen:<<create>>
-   activate NumOfPerScreen
-DateAndTimeScreen->NumOfPerScreen:goTo()
-  deactivate DateAndTimeScreen
-
-User->NumOfPerScreen:selectNumOfPerson()
-deactivate NumOfPerScreen
-
-else No Available Hours
- 
-     activate DateAndTimeScreen
-        
-DateAndTimeScreen -> DBManager
-  activate DBManager
-
-DBManager--> DateAndTimeScreen:noAvailFreeHours()
-    deactivate DBManager 
-
-
-DateAndTimeScreen-->*NoFreeHoursScreen:<<create>>
-    activate NoFreeHoursScreen
-DateAndTimeScreen -> NoFreeHoursScreen: displayMessage()
-    deactivate DateAndTimeScreen
-   deactivate NoFreeHoursScreen
-
+else Too Many Persons
+User->NumOfPersonScreen:Choose Number of Persons
+activate NumOfPersonScreen
+NumOfPersonScreen->ManagePersonClass:setNumber()
+activate ManagePersonClass
+ManagePersonClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->ManagePersonClass:return failure message
+deactivate DataBaseManager
+ManagePersonClass->NumOfPersonScreen:showResults()
+NumOfPersonScreen-->*TooManyPersonsScreen:<create>
+deactivate NumOfPersonScreen
+activate TooManyPersonsScreen
+ManagePersonClass->TooManyPersonsScreen:display()
+deactivate TooManyPersonsScreen
+deactivate ManagePersonClass
 end
 
 
-
-NumOfPerScreen -> DBManager:checkData()
-    activate DataBase
-    activate NumOfPerScreen
-alt Check Number Of Person
-
-NumOfPerScreen <-- DBManager: validateData()
-  deactivate DBManager
-
-NumOfPerScreen->*PaymentMethodScreen:<<create>> 
-
-  activate PaymentMethodScreen
-NumOfPerScreen -> PaymentMethodScreen:goTo()
-  deactivate PaymentMethodScreen
-  deactivate NumOfPerScreen
-
-
-
-else Excessive Number Of Person
-
-NumOfPerScreen->DBManager:checkData()
-    activate DBManager
-NumOfPerScreen<--DBManager:InvalidData()
-    deactivate DBManager
-
-NumOfPerScreen->*MaximumNumOfPerScreen:<<create>>
-
-    activate NumOfPerScreen
-    activate MaximumNumOfPerScreen
-
-NumOfPerScreen-> MaximumNumOfPerScreen: display()
-
-    deactivate NumOfPerScreen
-    deactivate MaximumNumOfPerScreen
-
-end
-
-
-     activate NumOfPerScreen
-
-    deactivate NumOfPerScreen
-User->PaymentMethodScreen:choosePaymentMethod
-    activate PaymentMethodScreen
-
-
-PaymentMethodScreen->*PayingStageCompleted:<<create>>
-    activate PayingStageCompleted
-PaymentMethodScreen->PayingStageCompleted:ConfDisplayMessage()
-    create Booking
-    
-PayingStageCompleted->*ConfEmail:<<create>>
-    activate ConfEmail
-User<--ConfEmail:sendConfEmail()
-    deactivate ConfEmail
-
-
-PayingStageCompleted->DBManager:validateBooking()
-    activate DBManager
-
-
-
-activate Booking
-Booking<--DBManager:returnValidation()
-
-
-
-    deactivate DBManager
-   
-    
-    deactivate User
-
-PayingStageCompleted->Booking:CreateBooking()\n
- deactivate PayingStageCompleted
-deactivate Booking
+activate ManagePersonClass
+ManagePersonClass->PaymentMethodScreen:display()
+activate PaymentMethodScreen
+deactivate ManagePersonClass
+User->PaymentMethodScreen:Choose Payment Method And Pay
+PaymentMethodScreen->ManagePaymentClass:setMethod()
+activate ManagePaymentClass
+ManagePaymentClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->ManagePaymentClass:return success message
+deactivate DataBaseManager
+ManagePaymentClass->PaymentMethodScreen:ShowResults()
+PaymentMethodScreen-->*SuccessPaymentScreen:<create>
+deactivate PaymentMethodScreen
+activate SuccessPaymentScreen
+ManagePaymentClass->SuccessPaymentScreen:display()
+deactivate SuccessPaymentScreen
+ManagePaymentClass->BookingScreen:display()
+deactivate ManagePaymentClass
+activate BookingScreen
+BookingScreen->ManageBookingClass:setBooking()
+activate ManageBookingClass
+ManageBookingClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->ManageBookingClass:return success message
+deactivate DataBaseManager
+ManageBookingClass->BookingScreen:showResults()
+deactivate BookingScreen
+ManageBookingClass->User:sendEmail()
+deactivate ManageBookingClass
