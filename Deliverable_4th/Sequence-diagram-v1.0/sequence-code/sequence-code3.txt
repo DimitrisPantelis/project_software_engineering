@@ -31,7 +31,7 @@ activate DataBaseManager
 DataBaseManager-->ManageCourtClass:return results
 ManageCourtClass->CourtsScreen:showResults()
 User->CourtsScreen:Choose Court
-CourtsScreen->ManageCourtClass:getChoice()
+CourtsScreen->ManageCourtClass:setChoice()
 deactivate CourtsScreen
 ManageCourtClass->DataBaseManager:submit()
 deactivate ManageCourtClass
