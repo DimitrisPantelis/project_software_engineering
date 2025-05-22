@@ -1,0 +1,65 @@
+actor User
+activate User
+participant profileScreen
+participant myBookingsScreen
+participant bookingDetailsScreen
+participant edittingBookingScreen
+participant bookingConfirmationScreen
+participant bookingCacellationScreen
+participant NoValidationScreen
+participant successfulCancellationScreen
+participant successfulBooking
+participant dataBaseManager
+
+
+
+User ->profileScreen: clickMyBookings() 
+activate profileScreen
+profileScreen ->myBookingsScreen:goTo()
+activate myBookingsScreen
+deactivate profileScreen 
+myBookingsScreen ->dataBaseManager:checkForBookings()
+activate dataBaseManager
+myBookingsScreen <--dataBaseManager:returnBookings()
+deactivate dataBaseManager
+alt CANCELLATION
+User ->myBookingsScreen:clickBooking()
+myBookingsScreen  -->*bookingDetailsScreen:<create>
+myBookingsScreen ->bookingDetailsScreen:goTo()
+activate bookingDetailsScreen
+deactivate myBookingsScreen
+User ->bookingDetailsScreen:clickEdit()
+bookingDetailsScreen -->*edittingBookingScreen:<create>
+bookingDetailsScreen ->edittingBookingScreen:goTo()
+activate edittingBookingScreen
+deactivate bookingDetailsScreen
+create bookingCacellationScreen
+User ->bookingCacellationScreen:clickCancel()
+activate bookingCacellationScreen
+create successfulCancellationScreen
+bookingCacellationScreen ->dataBaseManager:clickSure()
+activate dataBaseManager
+deactivate bookingCacellationScreen
+activate successfulCancellationScreen
+successfulCancellationScreen <--dataBaseManager:display()
+deactivate successfulCancellationScreen
+User ->edittingBookingScreen:clickConfirm()
+else NO VALIDATION
+edittingBookingScreen ->dataBaseManager:checkAvailabilityValidation()
+create bookingConfirmationScreen
+create NoValidationScreen
+bookingConfirmationScreen<--dataBaseManager:validation()
+activate bookingConfirmationScreen
+edittingBookingScreen ->bookingConfirmationScreen:goTo()
+deactivate edittingBookingScreen
+activate NoValidationScreen
+create successfulBooking
+NoValidationScreen <--dataBaseManager:noValidation()
+activate successfulBooking
+deactivate dataBaseManager
+deactivate NoValidationScreen
+bookingConfirmationScreen ->successfulBooking:display()
+deactivate bookingConfirmationScreen
+deactivate successfulBooking
+end
+deactivate User
