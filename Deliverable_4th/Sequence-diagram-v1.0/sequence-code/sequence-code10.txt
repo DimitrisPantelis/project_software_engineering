@@ -1,0 +1,50 @@
+actor User
+activate User
+participant paymentMethodScreen
+participant cardDetailsScreen
+participant enterEmailScreen
+participant payFaceToFaceScreen
+participant savedCardsScreen
+participant paymentSuccessful
+participant paymentFaildScreen
+database dataBase
+
+alt FalseData
+activate paymentMethodScreen
+User ->paymentMethodScreen:clickOnline()
+activate cardDetailsScreen
+paymentMethodScreen ->cardDetailsScreen:goTo()
+User ->cardDetailsScreen:enterData()
+User ->cardDetailsScreen:clickConfirm()
+activate dataBase
+cardDetailsScreen ->dataBase:checkData()
+deactivate cardDetailsScreen
+activate paymentFaildScreen
+paymentFaildScreen <--dataBase:wrongData()
+deactivate paymentFaildScreen
+paymentMethodScreen <--paymentFaildScreen:goTo()
+alt savedCard
+activate savedCardsScreen
+User->savedCardsScreen:clickPayBySavedCard()
+User ->savedCardsScreen:selectAndConfirm()
+savedCardsScreen ->dataBase:check()
+deactivate dataBase
+deactivate savedCardsScreen
+activate paymentSuccessful
+paymentSuccessful <--dataBase:dataOk()
+deactivate paymentSuccessful
+activate enterEmailScreen
+enterEmailScreen <--dataBase:display()
+end
+User ->enterEmailScreen:clickEmail()
+User ->enterEmailScreen:clickConfirm()
+enterEmailScreen ->paymentMethodScreen:receiptSent()
+deactivate enterEmailScreen
+deactivate paymentMethodScreen
+end
+alt cash
+activate payFaceToFaceScreen
+User->payFaceToFaceScreen:clickPayByCash()
+User<--payFaceToFaceScreen:display()
+deactivate payFaceToFaceScreen
+end
