@@ -1,0 +1,64 @@
+actor User
+activate User
+participant Homescreen
+participant LoginScreen
+participant MainScreen
+participant NoAccScreen
+
+participant RegScreen
+participant WrongPassScreen
+participant ForgotPassScreen
+database DataBase
+
+User->Homescreen:clickLogin()
+activate Homescreen
+Homescreen->LoginScreen:goTo()
+deactivate Homescreen
+activate LoginScreen
+User->LoginScreen:enterCredentials()
+LoginScreen->DataBase:checkCredentials()
+activate DataBase
+DataBase-->LoginScreen:returnConfirmationStatus()
+deactivate LoginScreen
+deactivate DataBase
+
+
+alt Correct Credentials
+activate LoginScreen
+LoginScreen->MainScreen:goTo()
+activate MainScreen
+MainScreen->DataBase:updateData()
+activate DataBase
+DataBase-->MainScreen:ok()
+deactivate DataBase
+deactivate MainScreen
+
+else Not Existing Account
+create NoAccScreen
+LoginScreen->NoAccScreen:display()
+activate NoAccScreen
+create RegScreen
+NoAccScreen->RegScreen:goTo()
+activate RegScreen
+deactivate NoAccScreen
+deactivate RegScreen
+
+else Wrong Password
+create WrongPassScreen
+LoginScreen->WrongPassScreen:display()
+activate WrongPassScreen
+WrongPassScreen-->LoginScreen:reload()
+deactivate WrongPassScreen
+
+else Forgot Password
+User->LoginScreen:clickForgotPassword()
+create ForgotPassScreen
+LoginScreen->ForgotPassScreen:goTo()
+activate ForgotPassScreen
+User->ForgotPassScreen:enterEmail()
+ForgotPassScreen-->User:sendEmail()
+deactivate ForgotPassScreen
+end
+
+deactivate LoginScreen
+deactivate User
