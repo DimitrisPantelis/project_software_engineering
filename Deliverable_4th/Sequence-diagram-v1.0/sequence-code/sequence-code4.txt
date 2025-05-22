@@ -1,0 +1,146 @@
+actor User
+participant SearchFieldScreen
+participant ResultsFieldSearchScreen
+participant DateAndTimeScreen
+participant NumOfPerScreen
+participant NoFreeHoursScreen
+participant MaximumNumOfPerScreen
+participant PaymentMethodScreen
+participant PayingStageCompleted
+participant Booking
+participant ConfEmail
+participant DBManager
+
+    activate User
+User->SearchFieldScreen:proceedToSearch()
+activate SearchFieldScreen
+
+SearchFieldScreen -> DBManager:searchField()
+    deactivate SearchFieldScreen
+    activate DBManager
+ResultsFieldSearchScreen<--DBManager:returnAvailFields()
+
+    activate ResultsFieldSearchScreen
+    deactivate DBManager
+User->ResultsFieldSearchScreen:selectField()
+
+DBManager <- DateAndTimeScreen:checkAvailDateAndTime()
+  create DateAndTimeScreen
+  ResultsFieldSearchScreen->DateAndTimeScreen:goTo()
+    deactivate ResultsFieldSearchScreen
+
+activate DateAndTimeScreen
+
+User -> DateAndTimeScreen:selectDate()
+
+    activate DBManager
+
+alt Available Hours
+
+
+   deactivate DBManager
+
+
+DBManager --> DateAndTimeScreen:returnAvailHours()
+DateAndTimeScreen->*NumOfPerScreen:<<create>>
+   activate NumOfPerScreen
+DateAndTimeScreen->NumOfPerScreen:goTo()
+  deactivate DateAndTimeScreen
+
+User->NumOfPerScreen:selectNumOfPerson()
+deactivate NumOfPerScreen
+
+else No Available Hours
+ 
+     activate DateAndTimeScreen
+        
+DateAndTimeScreen -> DBManager
+  activate DBManager
+
+DBManager--> DateAndTimeScreen:noAvailFreeHours()
+    deactivate DBManager 
+
+
+DateAndTimeScreen-->*NoFreeHoursScreen:<<create>>
+    activate NoFreeHoursScreen
+DateAndTimeScreen -> NoFreeHoursScreen: displayMessage()
+    deactivate DateAndTimeScreen
+   deactivate NoFreeHoursScreen
+
+end
+
+
+
+NumOfPerScreen -> DBManager:checkData()
+    activate DataBase
+    activate NumOfPerScreen
+alt Check Number Of Person
+
+NumOfPerScreen <-- DBManager: validateData()
+  deactivate DBManager
+
+NumOfPerScreen->*PaymentMethodScreen:<<create>> 
+
+  activate PaymentMethodScreen
+NumOfPerScreen -> PaymentMethodScreen:goTo()
+  deactivate PaymentMethodScreen
+  deactivate NumOfPerScreen
+
+
+
+else Excessive Number Of Person
+
+NumOfPerScreen->DBManager:checkData()
+    activate DBManager
+NumOfPerScreen<--DBManager:InvalidData()
+    deactivate DBManager
+
+NumOfPerScreen->*MaximumNumOfPerScreen:<<create>>
+
+    activate NumOfPerScreen
+    activate MaximumNumOfPerScreen
+
+NumOfPerScreen-> MaximumNumOfPerScreen: display()
+
+    deactivate NumOfPerScreen
+    deactivate MaximumNumOfPerScreen
+
+end
+
+
+     activate NumOfPerScreen
+
+    deactivate NumOfPerScreen
+User->PaymentMethodScreen:choosePaymentMethod
+    activate PaymentMethodScreen
+
+
+PaymentMethodScreen->*PayingStageCompleted:<<create>>
+    activate PayingStageCompleted
+PaymentMethodScreen->PayingStageCompleted:ConfDisplayMessage()
+    create Booking
+    
+PayingStageCompleted->*ConfEmail:<<create>>
+    activate ConfEmail
+User<--ConfEmail:sendConfEmail()
+    deactivate ConfEmail
+
+
+PayingStageCompleted->DBManager:validateBooking()
+    activate DBManager
+
+
+
+activate Booking
+Booking<--DBManager:returnValidation()
+
+
+
+    deactivate DBManager
+   
+    
+    deactivate User
+
+PayingStageCompleted->Booking:CreateBooking()\n
+ deactivate PayingStageCompleted
+deactivate Booking
