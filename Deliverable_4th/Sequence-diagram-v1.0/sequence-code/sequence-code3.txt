@@ -1,61 +1,59 @@
-actor user
-participant LoginScreen
-participant SportsMenuSceen
-participant CourtsScreeen
-participant AvailableCourtsScreen
-participant NotAvailableCourtScreen
-participant DatabaseManager
+actor User
+participant MainScreen
+participant CourtsScreen
+participant ResultsScreen
+participant NoAvailableCourtScreen
+database DataBase
 
-user->LoginScreen:login()
-activate LoginScreen
+activate User
+User->MainScreen:goTo()
+activate MainScreen
+User->MainScreen:chooseSport()
+MainScreen->CourtsScreen:goTo()
+activate CourtsScreen
+deactivate MainScreen
+alt Apply Filters
+User->CourtsScreen:applyFilter()
+CourtsScreen->DataBase:searchCourts()
+activate DataBase
+DataBase-->CourtsScreen:returnCourts()
+deactivate DataBase
+create ResultsScreen
+CourtsScreen-->ResultsScreen:<create>
+CourtsScreen->ResultsScreen:display()
+deactivate CourtsScreen
+activate ResultsScreen
+User->ResultsScreen:chooseCourt()
+ResultsScreen->DataBase:submitOption()
+activate DataBase
+DataBase-->ResultsScreen:returnOption()
+deactivate DataBase
+deactivate ResultsScreen
 
-LoginScreen->SportsMenuSceen:display()
-activate SportsMenuSceen
-user->SportsMenuSceen:chooseSport()
-deactivate LoginScreen
-SportsMenuSceen->CourtsScreeen:display()
-activate CourtsScreeen
-deactivate SportsMenuSceen
-user->CourtsScreeen:infoCourts()
-user->CourtsScreeen:applyFilter()
-CourtsScreeen->AvailableCourtsScreen:showAvailableCourt
-activate AvailableCourtsScreen
-deactivate CourtsScreeen
-user->AvailableCourtsScreen:chooseCourt()
-AvailableCourtsScreen->DatabaseManager:isAvailable()
-activate DatabaseManager
-AvailableCourtsScreen<--DatabaseManager:returnAvailabilitySubmitted()
-deactivate DatabaseManager
-deactivate AvailableCourtsScreen
-alt altcase 1
-SportsMenuSceen->CourtsScreeen:display()
-activate CourtsScreeen
-activate SportsMenuSceen
-user->CourtsScreeen:viewByregion()
-CourtsScreeen->AvailableCourtsScreen:showAvailableCourts()
-activate AvailableCourtsScreen
-deactivate SportsMenuSceen
-deactivate CourtsScreeen
-else altcase 2 
-deactivate AvailableCourtsScreen
-SportsMenuSceen->CourtsScreeen:display()
-activate SportsMenuSceen
-activate CourtsScreeen
-user->CourtsScreeen:byRegion()
-deactivate SportsMenuSceen
-CourtsScreeen-->NotAvailableCourtScreen:create()
-CourtsScreeen->NotAvailableCourtScreen:display()
-activate NotAvailableCourtScreen
-deactivate CourtsScreeen 
-else altcase 3 
-deactivate NotAvailableCourtScreen
-SportsMenuSceen->CourtsScreeen:display()
-activate SportsMenuSceen
-activate CourtsScreeen
-user->CourtsScreeen:byRegion()
-deactivate SportsMenuSceen
-CourtsScreeen->AvailableCourtsScreen:showAvailableCourts()
-activate AvailableCourtsScreen
-deactivate CourtsScreeen
+else Search By Region
+activate CourtsScreen
+User->CourtsScreen:searchByRegion()
+CourtsScreen->DataBase:searchCourts()
+activate DataBase
+DataBase-->CourtsScreen:returnCourts()
+CourtsScreen->ResultsScreen:display
+activate ResultsScreen
+deactivate ResultsScreen
+deactivate DataBase
+deactivate CourtsScreen
+
+else No Available Court
+activate CourtsScreen
+User->CourtsScreen:searchByRegion()
+CourtsScreen->DataBase:searchCourts()
+activate DataBase
+DataBase-->CourtsScreen:returnCourts()
+deactivate DataBase
+create NoAvailableCourtScreen
+activate NoAvailableCourtScreen
+CourtsScreen->NoAvailableCourtScreen:display()
+deactivate NoAvailableCourtScreen
+deactivate CourtsScreen
 end
-deactivate AvailableCourtsScreen
+
+deactivate User
