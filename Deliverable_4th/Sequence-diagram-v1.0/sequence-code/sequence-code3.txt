@@ -3,57 +3,53 @@ participant MainScreen
 participant CourtsScreen
 participant ResultsScreen
 participant NoAvailableCourtScreen
-database DataBase
+participant DataBaseManager
 
-activate User
 User->MainScreen:goTo()
 activate MainScreen
-User->MainScreen:chooseSport()
+User->MainScreen:chooseSport
 MainScreen->CourtsScreen:goTo()
 activate CourtsScreen
 deactivate MainScreen
 alt Apply Filters
 User->CourtsScreen:applyFilter()
-CourtsScreen->DataBase:searchCourts()
-activate DataBase
-DataBase-->CourtsScreen:returnCourts()
-deactivate DataBase
-create ResultsScreen
-CourtsScreen-->ResultsScreen:<create>
+CourtsScreen->DataBaseManager:searchCourts()
+activate DataBaseManager
+DataBaseManager-->CourtsScreen:returnCourts()
+deactivate DataBaseManager
+CourtsScreen-->*ResultsScreen:<create>
 CourtsScreen->ResultsScreen:display()
 deactivate CourtsScreen
 activate ResultsScreen
-User->ResultsScreen:chooseCourt()
-ResultsScreen->DataBase:submitOption()
-activate DataBase
-DataBase-->ResultsScreen:returnOption()
-deactivate DataBase
+User->ResultsScreen:chooseCourt
+ResultsScreen->DataBaseManager:submitOption()
+activate DataBaseManager
+DataBaseManager-->ResultsScreen:returnOption()
+deactivate DataBaseManager
 deactivate ResultsScreen
 
 else Search By Region
-activate CourtsScreen
 User->CourtsScreen:searchByRegion()
-CourtsScreen->DataBase:searchCourts()
-activate DataBase
-DataBase-->CourtsScreen:returnCourts()
-CourtsScreen->ResultsScreen:display
+activate CourtsScreen
+CourtsScreen->DataBaseManager:searchCourts()
+activate DataBaseManager
+DataBaseManager-->CourtsScreen:returnCourts()
+deactivate DataBaseManager
+CourtsScreen->ResultsScreen:display()
 activate ResultsScreen
 deactivate ResultsScreen
-deactivate DataBase
 deactivate CourtsScreen
 
 else No Available Court
-activate CourtsScreen
 User->CourtsScreen:searchByRegion()
-CourtsScreen->DataBase:searchCourts()
-activate DataBase
-DataBase-->CourtsScreen:returnCourts()
-deactivate DataBase
-create NoAvailableCourtScreen
-activate NoAvailableCourtScreen
+activate CourtsScreen
+CourtsScreen->DataBaseManager:searchCourts()
+activate DataBaseManager
+DataBaseManager-->CourtsScreen:returnCourts()
+deactivate DataBaseManager
+CourtsScreen->*NoAvailableCourtScreen:<create>
 CourtsScreen->NoAvailableCourtScreen:display()
+activate NoAvailableCourtScreen
 deactivate NoAvailableCourtScreen
 deactivate CourtsScreen
 end
-
-deactivate User
