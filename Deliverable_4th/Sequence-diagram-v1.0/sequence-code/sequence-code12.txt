@@ -1,0 +1,69 @@
+actor User
+activate User
+participant MainScreen
+participant Map
+participant FieldInfoScreen
+participant MoreInfoScreen
+participant searchFieldScreen
+database DataBase
+
+User->MainScreen:clickMap()
+activate MainScreen
+MainScreen->Map:goTo()
+activate Map
+deactivate MainScreen
+
+alt More Info
+User->Map:clickPin()
+Map->DataBase:pinInfo()
+activate DataBase
+DataBase-->Map:returnPinInfo()
+create FieldInfoScreen
+Map->FieldInfoScreen:display()
+activate FieldInfoScreen
+deactivate Map
+User->FieldInfoScreen:clickMore()
+FieldInfoScreen->DataBase:morePinInfo()
+DataBase->FieldInfoScreen:returnMoreInfo()
+deactivate DataBase
+create MoreInfoScreen
+FieldInfoScreen->MoreInfoScreen:goTo()
+activate MoreInfoScreen
+deactivate FieldInfoScreen
+MoreInfoScreen->Map:back()
+deactivate MoreInfoScreen
+activate Map
+deactivate Map
+
+else Track
+User->Map:clickPin()
+Map->DataBase:pinInfo()
+activate DataBase
+DataBase-->Map:returnPinInfo()
+deactivate DataBase
+activate Map
+Map->FieldInfoScreen:display()
+activate FieldInfoScreen
+deactivate Map 
+User->FieldInfoScreen:clickTrack()
+FieldInfoScreen-->User:requestLocation()
+User->FieldInfoScreen:enterLocation
+FieldInfoScreen->FieldInfoScreen:showRoute()
+deactivate FieldInfoScreen
+
+else Search
+User->Map:clickSearch()
+activate Map
+create searchFieldScreen
+Map->searchFieldScreen:display()
+activate searchFieldScreen
+deactivate Map
+User->searchFieldScreen:searchName()
+searchFieldScreen->DataBase:searchInfo()
+activate DataBase
+DataBase-->searchFieldScreen:returnPin()
+deactivate DataBase
+deactivate searchFieldScreen
+end
+
+deactivate User
