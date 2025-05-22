@@ -1,0 +1,68 @@
+actor User
+activate User
+participant HomeScreen
+participant AdmLogin
+participant AdmHomeScreen
+participant NewFieldEntryScreen
+participant SuccessEntryScreen
+participant EditEntryScreen
+participant EditFieldInfoScreen
+participant SuccessEditScreen
+database DataBase
+
+User->HomeScreen:clickLoginAsAdmin()
+activate HomeScreen
+HomeScreen->AdmLogin:goTo()
+activate AdmLogin
+deactivate HomeScreen
+User->AdmLogin:enterAdminCredentials()
+AdmLogin->AdmHomeScreen:goTo()
+activate AdmHomeScreen
+deactivate AdmLogin
+
+alt New Field Entry 
+User->AdmHomeScreen:clickNewEntry()
+create NewFieldEntryScreen
+AdmHomeScreen->NewFieldEntryScreen:goTo()
+deactivate AdmHomeScreen
+activate NewFieldEntryScreen
+User->NewFieldEntryScreen:enterFieldInfo()
+NewFieldEntryScreen->DataBase:Validation()
+activate DataBase
+DataBase-->NewFieldEntryScreen:returnValidation()
+deactivate DataBase
+NewFieldEntryScreen->DataBase:submit()
+activate DataBase
+DataBase-->NewFieldEntryScreen:ok()
+deactivate DataBase
+create SuccessEntryScreen
+NewFieldEntryScreen->SuccessEntryScreen:display()
+activate SuccessEntryScreen
+deactivate SuccessEntryScreen
+deactivate NewFieldEntryScreen
+
+else Edit Entry
+User->AdmHomeScreen:clickEditEntry()
+activate AdmHomeScreen
+create EditEntryScreen
+AdmHomeScreen->EditEntryScreen:goTo()
+activate EditEntryScreen
+User->EditEntryScreen:clickEntry()
+create EditFieldInfoScreen
+EditEntryScreen->EditFieldInfoScreen:goTo()
+deactivate EditEntryScreen
+activate EditFieldInfoScreen
+User->EditFieldInfoScreen:editFieldInfo()
+EditFieldInfoScreen->DataBase:submit()
+activate DataBase
+DataBase-->EditFieldInfoScreen:ok()
+deactivate DataBase
+create SuccessEditScreen
+EditFieldInfoScreen->SuccessEditScreen:display()
+activate SuccessEditScreen
+deactivate SuccessEditScreen
+deactivate EditFieldInfoScreen
+end
+
+deactivate AdmHomeScreen
+deactivate User
