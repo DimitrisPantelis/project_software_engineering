@@ -12,14 +12,16 @@ participant DataBaseManager
 
 
 User->Homescreen:selectSignUp()
+activate Homescreen
 Homescreen->RegScreen:goTo()
+deactivate Homescreen
 activate RegScreen
-User->RegScreen:enterDetails()
+User->RegScreen:enterDetails
 User->RegScreen:clickSubmitButton()
 
 RegScreen->DataBaseManager:checkDetails()
 activate DataBaseManager
-RegScreen<--DataBaseManager:returnDetails()
+RegScreen<--DataBaseManager:returnDetails
 deactivate DataBaseManager
 
 alt ValidateDetails
@@ -29,29 +31,33 @@ RegScreen->Account:display()
 deactivate Account
 deactivate RegScreen
 else NonValidateDetails
-User->RegScreen:enterExistingEmail()
+User->RegScreen:enterExistingEmail
 activate RegScreen
 RegScreen-->*ExistAccScreen:<create>
-activate ExistAccScreen
 RegScreen->ExistAccScreen:display()
+activate ExistAccScreen
+
 deactivate RegScreen
 ExistAccScreen-->*LoginScreen:<create>
 activate LoginScreen
-ExistAccScreen->LoginScreen:display()
+
+ExistAccScreen->LoginScreen:goTo()
 deactivate LoginScreen
-User->RegScreen:enterWeakPass()
+User->RegScreen:enterWeakPass
 activate RegScreen
 RegScreen-->*WeakPassScreen:<create>
-activate WeakPassScreen
 deactivate RegScreen
 ExistAccScreen->WeakPassScreen:display()
-ExistAccScreen<--WeakPassScreen:enterStrongerPass()
+activate WeakPassScreen
+
+ExistAccScreen<--WeakPassScreen:enterStrongerPass
 deactivate WeakPassScreen
 end
 
 ExistAccScreen-->*ConfEmailScreen:<create>
-activate ConfEmailScreen
 ExistAccScreen->ConfEmailScreen:display()
+activate ConfEmailScreen
+
 deactivate ExistAccScreen
 User->ConfEmailScreen:clickLinkButton()
 ConfEmailScreen->ConfEmailScreen:checkvalidateLink()
@@ -60,4 +66,3 @@ ConfEmailScreen->ConfRegScreen:goTo()
 deactivate ConfEmailScreen
 activate ConfRegScreen
 ConfRegScreen->ConfRegScreen:successReg()
-deactivate ConfRegScreen
