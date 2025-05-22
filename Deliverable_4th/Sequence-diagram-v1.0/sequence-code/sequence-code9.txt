@@ -1,0 +1,59 @@
+actor User
+participant profileScreen
+participant editProfileScreen
+participant updateconfirmScreen
+participant updatedProfile
+participant nonvalidData
+database Database
+
+activate User
+
+
+
+User -> profileScreen: Login() 
+activate profileScreen
+User->profileScreen: askEditProfile()
+
+
+profileScreen-> editProfileScreen: GoTo()
+
+    deactivate profileScreen
+
+  activate editProfileScreen
+User-> editProfileScreen: makechanges
+
+editProfileScreen->Database: askProfiledata()
+    activate Database
+Database--> editProfileScreen: giveProfiledata()
+ deactivate Database
+User->editProfileScreen: confirmchanges
+
+editProfileScreen->Database:checknewdata()
+ activate Database
+    alt non valid changes
+
+Database --> editProfileScreen: wrongNewData()
+
+editProfileScreen -> nonvalidData: display()
+activate nonvalidData
+
+
+editProfileScreen<--nonvalidData:display()\n
+  deactivate nonvalidData
+  end
+
+
+Database --> editProfileScreen: correctNewData()
+deactivate Database
+editProfileScreen-> updateconfirmScreen: display()
+activate updateconfirmScreen
+
+
+
+deactivate editProfileScreen
+
+
+
+updateconfirmScreen->updatedProfile: updatefinish() 
+deactivate updateconfirmScreen
+activate updatedProfile
