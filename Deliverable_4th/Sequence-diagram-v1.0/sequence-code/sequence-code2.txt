@@ -1,64 +1,85 @@
 actor User
-activate User
-participant Homescreen
+participant HomeScreen
 participant LoginScreen
+participant ManageLoginClass
 participant MainScreen
 participant NoAccScreen
-
 participant RegScreen
 participant WrongPassScreen
 participant ForgotPassScreen
-database DataBase
+participant ManagePasswordClass
+participant DataBaseManager
 
-User->Homescreen:clickLogin()
-activate Homescreen
-Homescreen->LoginScreen:goTo()
-deactivate Homescreen
+ManageLoginClass->HomeScreen:display()
+activate ManageLoginClass
+activate HomeScreen
+User->HomeScreen:Choose Login
+HomeScreen->ManageLoginClass:setChoice()
+deactivate HomeScreen
+ManageLoginClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->ManageLoginClass:return success message
+deactivate DataBaseManager
+ManageLoginClass->LoginScreen:display()
 activate LoginScreen
-User->LoginScreen:enterCredentials()
-LoginScreen->DataBase:checkCredentials()
-activate DataBase
-DataBase-->LoginScreen:returnConfirmationStatus()
+User->LoginScreen:Enter Credentials
+LoginScreen->ManageLoginClass:setCredentials()
+ManageLoginClass->DataBaseManager:checkCredentials()
+activate DataBaseManager
+DataBaseManager-->ManageLoginClass:return results
+deactivate DataBaseManager
+ManageLoginClass->LoginScreen:showResults()
 deactivate LoginScreen
-deactivate DataBase
-
-
 alt Correct Credentials
-activate LoginScreen
-LoginScreen->MainScreen:goTo()
+ManageLoginClass-->*MainScreen:<create>
+
 activate MainScreen
-MainScreen->DataBase:updateData()
-activate DataBase
-DataBase-->MainScreen:ok()
-deactivate DataBase
+ManageLoginClass->MainScreen:display()
 deactivate MainScreen
 
 else Not Existing Account
-create NoAccScreen
-LoginScreen->NoAccScreen:display()
+ManageLoginClass-->*NoAccScreen:<create>
 activate NoAccScreen
-create RegScreen
-NoAccScreen->RegScreen:goTo()
-activate RegScreen
+ManageLoginClass->NoAccScreen:display()
 deactivate NoAccScreen
+
+ManageLoginClass-->*RegScreen:<create>
+activate RegScreen
+ManageLoginClass->RegScreen:display()
 deactivate RegScreen
 
 else Wrong Password
-create WrongPassScreen
-LoginScreen->WrongPassScreen:display()
+ManageLoginClass-->*WrongPassScreen:<create>
 activate WrongPassScreen
-WrongPassScreen-->LoginScreen:reload()
+ManageLoginClass->WrongPassScreen:display()
 deactivate WrongPassScreen
+ManageLoginClass->LoginScreen:display()
+deactivate ManageLoginClass
+activate LoginScreen
+deactivate LoginScreen
 
 else Forgot Password
-User->LoginScreen:clickForgotPassword()
-create ForgotPassScreen
-LoginScreen->ForgotPassScreen:goTo()
-activate ForgotPassScreen
-User->ForgotPassScreen:enterEmail()
-ForgotPassScreen-->User:sendEmail()
-deactivate ForgotPassScreen
-end
-
+User->LoginScreen:Choose Forgot Password
+activate LoginScreen
+LoginScreen->ManageLoginClass:setChoice()
 deactivate LoginScreen
-deactivate User
+activate ManageLoginClass
+ManageLoginClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->ManageLoginClass:return success message
+deactivate DataBaseManager
+ManageLoginClass-->*ForgotPassScreen:<create>
+ManageLoginClass->ForgotPassScreen:display()
+deactivate ManageLoginClass
+activate ForgotPassScreen
+User->ForgotPassScreen:Enter Email
+ForgotPassScreen->ManagePasswordClass:setEmail()
+activate ManagePasswordClass
+deactivate ForgotPassScreen
+ManagePasswordClass->DataBaseManager:checkEmail()
+activate DataBaseManager
+DataBaseManager-->ManagePasswordClass:return success message
+deactivate DataBaseManager
+ManagePasswordClass-->User:sendEmail()
+deactivate ManagePasswordClass
+end
