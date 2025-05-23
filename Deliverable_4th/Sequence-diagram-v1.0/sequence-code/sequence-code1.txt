@@ -1,8 +1,10 @@
 actor User
 
-participant Homescreen
+participant HomeScreen
 participant RegScreen
+participant ManageRegClass
 participant Account
+participant ManageAccountClass
 participant ExistAccScreen
 participant LoginScreen
 participant WeakPassScreen
@@ -10,59 +12,95 @@ participant ConfEmailScreen
 participant ConfRegScreen
 participant DataBaseManager
 
-
-User->Homescreen:selectSignUp()
-activate Homescreen
-Homescreen->RegScreen:goTo()
-deactivate Homescreen
-activate RegScreen
-User->RegScreen:enterDetails
-User->RegScreen:clickSubmitButton()
-
-RegScreen->DataBaseManager:checkDetails()
+ManageRegClass->HomeScreen:display()
+activate ManageRegClass
+activate HomeScreen
+User->HomeScreen:Choose Sign Up
+HomeScreen->ManageRegClass:setChoice()
+deactivate HomeScreen
+ManageRegClass->DataBaseManager:submit()
 activate DataBaseManager
-RegScreen<--DataBaseManager:returnDetails
+DataBaseManager-->ManageRegClass:return success message
 deactivate DataBaseManager
+ManageRegClass->RegScreen:display()
+activate RegScreen
+User->RegScreen:Enter Information & Submit
 
-alt ValidateDetails
-RegScreen-->*Account:<create>
-activate Account
-RegScreen->Account:display()
-deactivate Account
+RegScreen->ManageRegClass:setInfo()
 deactivate RegScreen
-else NonValidateDetails
-User->RegScreen:enterExistingEmail
+ManageRegClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->ManageRegClass:return results
+deactivate DataBaseManager
+alt Successful Sign Up
+ManageRegClass->RegScreen:showResults()
+activate RegScreen
+deactivate ManageRegClass
+RegScreen-->*Account:<create>
+deactivate RegScreen
+activate Account
+Account->ManageAccountClass:getConfirmation()
+activate ManageAccountClass
+deactivate Account
+
+else Existing Email
+
+ManageRegClass->RegScreen:showResults()
+activate ManageRegClass
 activate RegScreen
 RegScreen-->*ExistAccScreen:<create>
-RegScreen->ExistAccScreen:display()
+deactivate RegScreen
+ManageRegClass->ExistAccScreen:display()
+deactivate ManageRegClass
+
 activate ExistAccScreen
 
-deactivate RegScreen
 ExistAccScreen-->*LoginScreen:<create>
 activate LoginScreen
-
-ExistAccScreen->LoginScreen:goTo()
+deactivate ExistAccScreen
+ManageAccountClass->LoginScreen:display()
 deactivate LoginScreen
-User->RegScreen:enterWeakPass
+deactivate ManageAccountClass
+
+else Weak Password
+ManageRegClass->RegScreen:showResults()
+activate ManageRegClass
 activate RegScreen
+
 RegScreen-->*WeakPassScreen:<create>
-deactivate RegScreen
-ExistAccScreen->WeakPassScreen:display()
+ManageRegClass->WeakPassScreen:display()
 activate WeakPassScreen
 
-ExistAccScreen<--WeakPassScreen:enterStrongerPass
+ManageRegClass<--WeakPassScreen:return enter stronger password message
 deactivate WeakPassScreen
+ManageRegClass->RegScreen:showResults()
+deactivate ManageRegClass
+deactivate RegScreen
 end
 
-ExistAccScreen-->*ConfEmailScreen:<create>
-ExistAccScreen->ConfEmailScreen:display()
+ManageAccountClass->DataBaseManager:queryEmail()
+activate ManageAccountClass
+activate DataBaseManager
+DataBaseManager-->ManageAccountClass:return results
+deactivate DataBaseManager
+ManageAccountClass->User:sendEmail()
+ManageAccountClass-->*ConfEmailScreen:<create>
+ManageAccountClass->ConfEmailScreen:display()
+deactivate ManageAccountClass
 activate ConfEmailScreen
-
-deactivate ExistAccScreen
-User->ConfEmailScreen:clickLinkButton()
-ConfEmailScreen->ConfEmailScreen:checkvalidateLink()
-ConfEmailScreen-->*ConfRegScreen:<create>
-ConfEmailScreen->ConfRegScreen:goTo()
+User->ConfEmailScreen:Click Link
+ConfEmailScreen->ManageAccountClass:verify()
 deactivate ConfEmailScreen
+activate ManageAccountClass
+ManageAccountClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager->ManageAccountClass:return success message
+deactivate DataBaseManager
+ManageAccountClass->Account:activate()
+activate Account
+deactivate Account
+ManageAccountClass-->*ConfRegScreen:<create>
 activate ConfRegScreen
-ConfRegScreen->ConfRegScreen:successReg()
+ManageAccountClass->ConfRegScreen:display()
+deactivate ManageAccountClass
+deactivate ConfRegScreen
