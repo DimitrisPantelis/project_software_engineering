@@ -1,9 +1,9 @@
 import java.util.List;
 
 public class CourtSearchController {
-    private Database db;
+    private DataBaseManager db;
 
-    public CourtSearchController(Database db) {
+    public CourtSearchController(DataBaseManager db) {
         this.db = db;
     }
 
