@@ -1,7 +1,9 @@
+import java.util.List;
+
 public class DataBaseManager(){
 
-    public void submit(){
-        
+    public boolean submit(){
+        return true;
 
     }
 
@@ -18,10 +20,14 @@ public class DataBaseManager(){
     }
 
     public void querySport(String sport){
-
+        // Query στη ΒΔ
+        return null;
     }
 
-    public void queryCourts(){}
+    public void queryCourts(String region){
+        // Query στη ΒΔ
+        return null;
+    }
 
     public boolean submitDate(date submitDate){
         return true;
@@ -30,5 +36,7 @@ public class DataBaseManager(){
     public boolean submitTime(time submitTime){
         return true;
     }
+
+    
     
 }

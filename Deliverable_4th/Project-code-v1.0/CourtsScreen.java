@@ -1,10 +1,19 @@
-import java.util.List;
-
 public class CourtsScreen(){
+
+    private String name;
+    private String sport;
+    private String region;
+    private double price;
+    private boolean available;
     private CourtSearchController controller;
 
-    public CourtScreen(CourtSearchController controller) {
+    public void CourtsScreen(CourtSearchController controller,String name, String sport, String region, double price, boolean available) {
         this.controller = controller;
+        this.name = name;
+        this.sport = sport;
+        this.region = region;
+        this.price = price;
+        this.available = available;
     }
 
     public void display(String sport){
@@ -18,20 +27,19 @@ public class CourtsScreen(){
         List<Court> courts = controller.getCourtsByFilter(sport, region, sortByPrice);
         showCourts(courts);
     }
-    public void setChoice(){}
-    public void setSearchBar(){}
-    
-    /*public void showCourts(List<Court> courts) {
-        // Εμφάνιση γηπέδων στην οθόνη
-    }
-
-    public void chooseCourt(String courtId) {
+    public void setChoice(String courtId){
         if (controller.isCourtAvailable(courtId)) {
             displayAvailable();
         } else {
             displayUnavailable();
         }
+    
     }
+    public void setSearchBar(){}
+    
+    /*public void showCourts(List<Court> courts) {
+     // Εμφάνιση γηπέδων στην οθόνη
+    } */
 
     private void displayAvailable() {
         // Εναλλαγή σε AvailableCourtsScreen
@@ -40,6 +48,5 @@ public class CourtsScreen(){
     private void displayUnavailable() {
         // Εναλλαγή σε NotAvailableCourtScreen
     }
-    */
 
 }
