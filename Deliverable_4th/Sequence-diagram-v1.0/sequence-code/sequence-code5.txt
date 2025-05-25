@@ -1,65 +1,79 @@
 actor User
-activate User
-participant profileScreen
-participant myBookingsScreen
-participant bookingDetailsScreen
-participant edittingBookingScreen
-participant bookingConfirmationScreen
-participant bookingCacellationScreen
-participant NoValidationScreen
-participant successfulCancellationScreen
-participant successfulBooking
-participant dataBaseManager
+participant ProfileScreen
+participant MyBookingsScreen
+participant BookingDetailsScreen
+participant ManageBookingClass
+participant EditConfirmationScreen
+participant SuccessfulCancellationScreen
+participant NoAvailableDayScreen
+participant DataBaseManager
 
 
+ManageBookingClass->ProfileScreen:display()
+activate ManageBookingClass
+activate ProfileScreen
+User->ProfileScreen:Choose My Bookings 
+ProfileScreen->ManageBookingClass:getBookings()
+deactivate ProfileScreen
+ManageBookingClass->DataBaseManager:queryBookings()
+activate DataBaseManager
+DataBaseManager-->ManageBookingClass:return results
+deactivate DataBaseManager
+ManageBookingClass->MyBookingsScreen:display()
+activate MyBookingsScreen
+User->MyBookingsScreen:Choose a Booking
+MyBookingsScreen->ManageBookingClass:getBookingDetails()
+deactivate MyBookingsScreen
+ManageBookingClass->DataBaseManager:queryBookingDetails()
+activate DataBaseManager
+DataBaseManager-->ManageBookingClass:return results
+deactivate DataBaseManager
+ManageBookingClass->BookingDetailsScreen:display()
+activate BookingDetailsScreen
 
-User ->profileScreen: clickMyBookings() 
-activate profileScreen
-profileScreen ->myBookingsScreen:goTo()
-activate myBookingsScreen
-deactivate profileScreen 
-myBookingsScreen ->dataBaseManager:checkForBookings()
-activate dataBaseManager
-myBookingsScreen <--dataBaseManager:returnBookings()
-deactivate dataBaseManager
-alt CANCELLATION
-User ->myBookingsScreen:clickBooking()
-myBookingsScreen  -->*bookingDetailsScreen:<create>
-myBookingsScreen ->bookingDetailsScreen:goTo()
-activate bookingDetailsScreen
-deactivate myBookingsScreen
-User ->bookingDetailsScreen:clickEdit()
-bookingDetailsScreen -->*edittingBookingScreen:<create>
-bookingDetailsScreen ->edittingBookingScreen:goTo()
-activate edittingBookingScreen
-deactivate bookingDetailsScreen
-create bookingCacellationScreen
-User ->bookingCacellationScreen:clickCancel()
-activate bookingCacellationScreen
-create successfulCancellationScreen
-bookingCacellationScreen ->dataBaseManager:clickSure()
-activate dataBaseManager
-deactivate bookingCacellationScreen
-activate successfulCancellationScreen
-successfulCancellationScreen <--dataBaseManager:display()
-deactivate successfulCancellationScreen
-User ->edittingBookingScreen:clickConfirm()
-else NO VALIDATION
-edittingBookingScreen ->dataBaseManager:checkAvailabilityValidation()
-create bookingConfirmationScreen
-create NoValidationScreen
-bookingConfirmationScreen<--dataBaseManager:validation()
-activate bookingConfirmationScreen
-edittingBookingScreen ->bookingConfirmationScreen:goTo()
-deactivate edittingBookingScreen
-activate NoValidationScreen
-create successfulBooking
-NoValidationScreen <--dataBaseManager:noValidation()
-activate successfulBooking
-deactivate dataBaseManager
-deactivate NoValidationScreen
-bookingConfirmationScreen ->successfulBooking:display()
-deactivate bookingConfirmationScreen
-deactivate successfulBooking
+alt Change Details
+User->BookingDetailsScreen:Edit Details
+BookingDetailsScreen->ManageBookingClass:setDetails()
+deactivate BookingDetailsScreen
+ManageBookingClass->DataBaseManager:submitDetails()
+activate DataBaseManager
+DataBaseManager-->ManageBookingClass:return success message
+deactivate DataBaseManager
+ManageBookingClass-->*EditConfirmationScreen:<create>
+activate EditConfirmationScreen
+ManageBookingClass->EditConfirmationScreen:display()
+deactivate EditConfirmationScreen
+ManageBookingClass-->User:sendEmail()
+deactivate ManageBookingClass
+
+else Cancel Booking
+User->BookingDetailsScreen:Cancel Booking  
+activate BookingDetailsScreen
+BookingDetailsScreen->ManageBookingClass:cancel()
+deactivate BookingDetailsScreen
+activate ManageBookingClass
+ManageBookingClass->DataBaseManager:submitCancellation()
+activate DataBaseManager
+DataBaseManager-->ManageBookingClass:return success message
+deactivate DataBaseManager
+ManageBookingClass-->*SuccessfulCancellationScreen:<create>
+activate SuccessfulCancellationScreen
+ManageBookingClass->SuccessfulCancellationScreen:display()
+deactivate SuccessfulCancellationScreen
+deactivate ManageBookingClass
+
+else Change Day
+User->BookingDetailsScreen:Change Day
+activate BookingDetailsScreen
+BookingDetailsScreen->ManageBookingClass:setDay()
+activate ManageBookingClass
+deactivate BookingDetailsScreen
+ManageBookingClass->DataBaseManager:submitDay()
+activate DataBaseManager
+DataBaseManager-->ManageBookingClass:return failure message
+deactivate DataBaseManager
+ManageBookingClass-->*NoAvailableDayScreen:<create>
+activate NoAvailableDayScreen
+ManageBookingClass->NoAvailableDayScreen:display()
+deactivate ManageBookingClass
 end
-deactivate User
