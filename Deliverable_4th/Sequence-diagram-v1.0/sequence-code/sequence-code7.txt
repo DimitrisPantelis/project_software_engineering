@@ -1,68 +1,104 @@
 actor User
-activate User
 participant HomeScreen
-participant AdmLogin
-participant AdmHomeScreen
+participant AdminLogin
+participant AdminManageClass
+participant AdminMainScreen
 participant NewFieldEntryScreen
 participant SuccessEntryScreen
 participant EditEntryScreen
 participant EditFieldInfoScreen
 participant SuccessEditScreen
-database DataBase
+participant DataBaseManager
 
-User->HomeScreen:clickLoginAsAdmin()
+AdminManageClass->HomeScreen:display()
+activate AdminManageClass
 activate HomeScreen
-HomeScreen->AdmLogin:goTo()
-activate AdmLogin
+User->HomeScreen:Choose Login as Administrator
+HomeScreen->AdminManageClass:getCredentials()
 deactivate HomeScreen
-User->AdmLogin:enterAdminCredentials()
-AdmLogin->AdmHomeScreen:goTo()
-activate AdmHomeScreen
-deactivate AdmLogin
+AdminManageClass->DataBaseManager:queryAdminLoginForm()
+activate DataBaseManager
+DataBaseManager-->AdminManageClass:return results
+deactivate DataBaseManager
+AdminManageClass->AdminLogin:display()
+activate AdminLogin
+User->AdminLogin:Enter Credentials
+AdminLogin->AdminManageClass:setCredentials()
+deactivate AdminLogin
+AdminManageClass->DataBaseManager:checkCredentials()
+activate DataBaseManager
+DataBaseManager-->AdminManageClass:return results
+deactivate DataBaseManager
+AdminManageClass->AdminMainScreen:display()
+activate AdminMainScreen
+deactivate AdminManageClass
 
 alt New Field Entry 
-User->AdmHomeScreen:clickNewEntry()
-create NewFieldEntryScreen
-AdmHomeScreen->NewFieldEntryScreen:goTo()
-deactivate AdmHomeScreen
+User->AdminMainScreen:Choose New Entry
+AdminMainScreen->AdminManageClass:setChoice()
+deactivate AdminMainScreen
+activate AdminManageClass
+AdminManageClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->AdminManageClass:return success message
+deactivate DataBaseManager
+AdminManageClass-->*NewFieldEntryScreen:<create>
+AdminManageClass->NewFieldEntryScreen:display()
+deactivate AdminManageClass
 activate NewFieldEntryScreen
-User->NewFieldEntryScreen:enterFieldInfo()
-NewFieldEntryScreen->DataBase:Validation()
-activate DataBase
-DataBase-->NewFieldEntryScreen:returnValidation()
-deactivate DataBase
-NewFieldEntryScreen->DataBase:submit()
-activate DataBase
-DataBase-->NewFieldEntryScreen:ok()
-deactivate DataBase
-create SuccessEntryScreen
-NewFieldEntryScreen->SuccessEntryScreen:display()
-activate SuccessEntryScreen
-deactivate SuccessEntryScreen
+User->NewFieldEntryScreen:Enter Field Info
+NewFieldEntryScreen->AdminManageClass:checkInfo()
 deactivate NewFieldEntryScreen
+activate AdminManageClass
+AdminManageClass->DataBaseManager:validateInfo()
+activate DataBaseManager
+DataBaseManager-->AdminManageClass:return info
+AdminManageClass->DataBaseManager:submitEntry()
+DataBaseManager-->AdminManageClass:return successful message
+deactivate DataBaseManager
+AdminManageClass-->*SuccessEntryScreen:<create>
+activate SuccessEntryScreen
+AdminManageClass->SuccessEntryScreen:display()
+deactivate SuccessEntryScreen
+deactivate AdminManageClass
 
 else Edit Entry
-User->AdmHomeScreen:clickEditEntry()
-activate AdmHomeScreen
-create EditEntryScreen
-AdmHomeScreen->EditEntryScreen:goTo()
+User->AdminMainScreen:Choose Edit Entry
+activate AdminMainScreen
+AdminMainScreen->AdminManageClass:setChoice()
+activate AdminManageClass
+deactivate AdminMainScreen
+AdminManageClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->AdminManageClass:return success message
+deactivate DataBaseManager
+AdminManageClass-->*EditEntryScreen:<create>
+AdminManageClass->EditEntryScreen:display()
 activate EditEntryScreen
-User->EditEntryScreen:clickEntry()
-create EditFieldInfoScreen
-EditEntryScreen->EditFieldInfoScreen:goTo()
+deactivate AdminManageClass
+User->EditEntryScreen:Choose Entry
+EditEntryScreen->AdminManageClass:getEntryInfo()
 deactivate EditEntryScreen
+activate AdminManageClass
+AdminManageClass->DataBaseManager:queryEntryInfo()
+activate DataBaseManager
+DataBaseManager-->AdminManageClass:return results
+deactivate DataBaseManager
+AdminManageClass-->*EditFieldInfoScreen:<create>
+AdminManageClass->EditFieldInfoScreen:display()
+deactivate AdminManageClass
 activate EditFieldInfoScreen
-User->EditFieldInfoScreen:editFieldInfo()
-EditFieldInfoScreen->DataBase:submit()
-activate DataBase
-DataBase-->EditFieldInfoScreen:ok()
-deactivate DataBase
-create SuccessEditScreen
-EditFieldInfoScreen->SuccessEditScreen:display()
-activate SuccessEditScreen
-deactivate SuccessEditScreen
+User->EditFieldInfoScreen:Edit Field Information
+EditFieldInfoScreen->AdminManageClass:changeInfo()
+activate AdminManageClass
 deactivate EditFieldInfoScreen
+AdminManageClass->DataBaseManager:submitInfo()
+activate DataBaseManager
+DataBaseManager-->AdminManageClass:return success message
+deactivate DataBaseManager
+AdminManageClass-->*SuccessEditScreen:<create>
+activate SuccessEditScreen
+AdminManageClass->SuccessEditScreen:display()
+deactivate SuccessEditScreen
+deactivate AdminManageClass
 end
-
-deactivate AdmHomeScreen
-deactivate User
