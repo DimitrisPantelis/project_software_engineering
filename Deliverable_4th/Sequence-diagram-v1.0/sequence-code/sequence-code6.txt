@@ -1,86 +1,83 @@
 actor User
 participant OppSearchScreen
-participant BookingScreen
-participant ParticipFormScreen
-participant ConfPartScreen
+participant OppBookingScreen
+participant ManageOpponentClass
+participant ParticipationFormScreen
+participant ParticipationConfScreen
 participant MyBookingsScreen
-participant Participation
-participant NotFoundOppScreen
-database DataBase
+participant NoOpponentScreen
+participant DataBaseManager
 
-activate User
-User->OppSearchScreen:searchOpponent()
+ManageOpponentClass->OppSearchScreen:display()
 activate OppSearchScreen
-
-
-alt FoundOpponent
-OppSearchScreen->DataBase:checkBookings()
-activate DataBase
-
+activate ManageOpponentClass
+User->OppSearchScreen:Search for Opponent
+OppSearchScreen->ManageOpponentClass:getOppBooking()
 deactivate OppSearchScreen
-activate BookingScreen
-BookingScreen<--DataBase:returnListAvailBookings()
-BookingScreen<-DataBase:display()
-deactivate DataBase
-deactivate BookingScreen
+ManageOpponentClass->DataBaseManager:queryOppBooking()
+activate DataBaseManager
+DataBaseManager-->ManageOpponentClass:return results
+deactivate DataBaseManager
+ManageOpponentClass->OppBookingScreen:display()
+activate OppBookingScreen
+alt Participate 
+User->OppBookingScreen:Choose a Booking
+OppBookingScreen->ManageOpponentClass:getParticipationForm()
+deactivate OppBookingScreen
+ManageOpponentClass->DataBaseManager:queryParticipationForm()
+activate DataBaseManager
+DataBaseManager-->ManageOpponentClass:return results
+deactivate DataBaseManager
+ManageOpponentClass-->*ParticipationFormScreen:<create>
+ManageOpponentClass->ParticipationFormScreen:display()
+deactivate ManageOpponentClass
+activate ParticipationFormScreen
+User->ParticipationFormScreen:Enter Number of Participants
+ParticipationFormScreen->ManageOpponentClass:changeStatus()
+deactivate ParticipationFormScreen
+activate ManageOpponentClass
+ManageOpponentClass->DataBaseManager:setToCompleted()
+activate DataBaseManager
+DataBaseManager-->ManageOpponentClass:return success message
+deactivate DataBaseManager
+ManageOpponentClass-->*ParticipationConfScreen:<create>
+activate ParticipationConfScreen
+ManageOpponentClass->ParticipationConfScreen:display()
+deactivate ParticipationConfScreen
+deactivate ManageOpponentClass
 
+else Request Opponent
+User->OppBookingScreen:Choose Requese Opponent
+activate OppBookingScreen
+OppBookingScreen->ManageOpponentClass:getBookings()
+deactivate OppBookingScreen
+activate ManageOpponentClass
+ManageOpponentClass->DataBaseManager:queryBookings()
+activate DataBaseManager
+DataBaseManager-->ManageOpponentClass:return results
+deactivate DataBaseManager
+ManageOpponentClass-->*MyBookingsScreen:<create>
+activate MyBookingsScreen
+ManageOpponentClass->MyBookingsScreen:display()
+deactivate ManageOpponentClass
+User->MyBookingsScreen:Choose Request Opponent on a Booking
+MyBookingsScreen->ManageOpponentClass:changeStatus()
+activate ManageOpponentClass
+deactivate MyBookingsScreen
+ManageOpponentClass->DataBaseManager:setToRequestOpp()
+activate DataBaseManager
+DataBaseManager-->ManageOpponentClass:return successful message
+deactivate DataBaseManager
+deactivate ManageOpponentClass
 
-  alt SelectBooking
-    User->BookingScreen:selectBooking()
-
-    create ParticipFormScreen
-    activate ParticipFormScreen
-    BookingScreen->ParticipFormScreen:<create>
-    BookingScreen->ParticipFormScreen:displayForm()
-
-
-      else NotSelectedBooking
-        create MyBookingsScreen
-        activate MyBookingsScreen
-        User->OppSearchScreen:selectNoBooking()
-        OppSearchScreen-->MyBookingsScreen:<create>
-        OppSearchScreen->MyBookingsScreen:displayMyBookings()
-        activate BookingScreen
-
-        BookingScreen<-MyBookingsScreen:addBookingList()
-        activate DataBase
-        MyBookingsScreen->DataBase:changeBookingStatus()
-        deactivate DataBase
-
-        deactivate MyBookingsScreen
-        deactivate BookingScreen
+else No Opponent Found
+activate OppBookingScreen
+OppBookingScreen->ManageOpponentClass:noResults()
+deactivate OppBookingScreen
+activate ManageOpponentClass
+ManageOpponentClass-->*NoOpponentScreen:<create>
+activate NoOpponentScreen
+ManageOpponentClass->NoOpponentScreen:display()
+deactivate NoOpponentScreen
+deactivate ManageOpponentClass
 end
-
-
-activate BookingScreen
-User->ParticipFormScreen:selectnumofpeople()
-
-activate DataBase
-ParticipFormScreen->DataBase:changeBookingStatus()
-deactivate ParticipFormScreen
-deactivate DataBase
-
-else NotFoundOpponent
-  create NotFoundOppScreen
-  activate NotFoundOppScreen
-  OppSearchScreen-->NotFoundOppScreen:<create>
-  OppSearchScreen->NotFoundOppScreen:displaymessage()
-  activate DataBase
-  NotFoundOppScreen->DataBase:changeBookingStatus()
-  deactivate DataBase
-end
-
-create Participation
-activate Participation
-activate ParticipFormScreen
-
-ParticipFormScreen-->Participation:<create>
-ParticipFormScreen->Participation:displayParticipation()
-deactivate Participation
-
-create ConfPartScreen
-activate ConfPartScreen
-ParticipFormScreen-->ConfPartScreen:<create>
-ParticipFormScreen->ConfPartScreen:confMessage()
-deactivate ConfPartScreen
-deactivate ParticipFormScreen
