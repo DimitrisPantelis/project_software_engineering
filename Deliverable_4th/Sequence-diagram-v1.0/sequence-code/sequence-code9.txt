@@ -1,59 +1,63 @@
 actor User
-participant profileScreen
-participant editProfileScreen
-participant updateconfirmScreen
-participant updatedProfile
-participant nonvalidData
-database Database
+participant MainScreen
+participant MyProfileScreen
+participant ManageProfileClass
+participant EditProfileScreen
+participant ConfUpdateScreen
+participant UpdatedProfileScreen
+participant InvalidDataScreen
+participant DataBaseManager
 
-activate User
+ManageProfileClass->MainScreen:display()
+activate ManageProfileClass
+activate MainScreen
+User->MainScreen:Choose My Profile
+MainScreen->ManageProfileClass:setChoice()
+deactivate MainScreen
+ManageProfileClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->ManageProfileClass:return success message
+deactivate DataBaseManager
+ManageProfileClass->MyProfileScreen:display()
+activate MyProfileScreen
+User->MyProfileScreen:Choose Edit Profile
+MyProfileScreen->ManageProfileClass:getEditProfile()
+deactivate MyProfileScreen
+ManageProfileClass->DataBaseManager:queryEditProfile()
+activate DataBaseManager
+DataBaseManager-->ManageProfileClass:return results
+deactivate DataBaseManager
+ManageProfileClass->EditProfileScreen:display()
+activate EditProfileScreen
+deactivate ManageProfileClass
+User->EditProfileScreen:Edit Information
+EditProfileScreen->ManageProfileClass:setInfo()
+deactivate EditProfileScreen
+activate ManageProfileClass
 
+alt Successful Edit
+ManageProfileClass->DataBaseManager:checkInfo()
+activate DataBaseManager
+DataBaseManager-->ManageProfileClass:return successful message
+deactivate DataBaseManager
+ManageProfileClass-->*ConfUpdateScreen:<create>
+activate ConfUpdateScreen
+ManageProfileClass->ConfUpdateScreen:display()
+deactivate ConfUpdateScreen
+ManageProfileClass-->*UpdatedProfileScreen:<create>
+activate UpdatedProfileScreen
+ManageProfileClass->UpdatedProfileScreen:display()
+deactivate UpdatedProfileScreen
 
+else Invalid Edit
+ManageProfileClass->DataBaseManager:checkInfo()
+activate DataBaseManager
+DataBaseManager-->ManageProfileClass:return failure message
+deactivate DataBaseManager
+ManageProfileClass-->*InvalidDataScreen:<create>
+activate InvalidDataScreen
+ManageProfileClass->InvalidDataScreen:display()
+deactivate InvalidDataScreen
+deactivate ManageProfileClass
 
-User -> profileScreen: Login() 
-activate profileScreen
-User->profileScreen: askEditProfile()
-
-
-profileScreen-> editProfileScreen: GoTo()
-
-    deactivate profileScreen
-
-  activate editProfileScreen
-User-> editProfileScreen: makechanges
-
-editProfileScreen->Database: askProfiledata()
-    activate Database
-Database--> editProfileScreen: giveProfiledata()
- deactivate Database
-User->editProfileScreen: confirmchanges
-
-editProfileScreen->Database:checknewdata()
- activate Database
-    alt non valid changes
-
-Database --> editProfileScreen: wrongNewData()
-
-editProfileScreen -> nonvalidData: display()
-activate nonvalidData
-
-
-editProfileScreen<--nonvalidData:display()\n
-  deactivate nonvalidData
-  end
-
-
-Database --> editProfileScreen: correctNewData()
-deactivate Database
-editProfileScreen-> updateconfirmScreen: display()
-activate updateconfirmScreen
-
-
-
-deactivate editProfileScreen
-
-
-
-updateconfirmScreen->updatedProfile: updatefinish() 
-deactivate updateconfirmScreen
-activate updatedProfile
+end
