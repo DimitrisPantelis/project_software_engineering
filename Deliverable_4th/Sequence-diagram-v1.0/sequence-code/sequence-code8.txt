@@ -1,101 +1,98 @@
-actor userc
-participant courtScreen
-participant courtPage
-participant ratingForm
-participant ratingScreen
-participant ratingConfirmationScreen
-participant rateEditingForm
-participant myRatingScreen
-participant ratingConfirmationOfDeletionScreen
-database db
+actor User
+participant FieldsScreen
+participant FieldInfoScreen
+participant ManageRatingClass
+participant RatingFormScreen
+participant RatingsScreen
+participant MyRatingsScreen
+participant EditRatingScreen
+participant ConfEditRatingScreen
+participant DataBaseManager
 
-entryspacing 0.8
-user->courtScreen:chooseCourt()
-activate courtScreen
+ManageRatingClass->FieldsScreen:display()
+activate ManageRatingClass
+activate FieldsScreen
+FieldsScreen->ManageRatingClass:getFields()
+deactivate FieldsScreen
+ManageRatingClass->DataBaseManager:queryFields()
+activate DataBaseManager
+DataBaseManager-->ManageRatingClass:return results
+deactivate DataBaseManager
+ManageRatingClass->FieldsScreen:showResults()
+activate FieldsScreen
+User->FieldsScreen:Choose a Field
+FieldsScreen->ManageRatingClass:setChoice()
+deactivate FieldsScreen
+ManageRatingClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->ManageRatingClass:return successful message
+deactivate DataBaseManager
+ManageRatingClass->FieldInfoScreen:display()
+activate FieldInfoScreen
+User->FieldInfoScreen:Choose Leave a Rating
+FieldInfoScreen->ManageRatingClass:setRating()
+deactivate FieldInfoScreen
+ManageRatingClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->ManageRatingClass:return successful message
+deactivate DataBaseManager
+ManageRatingClass-->*RatingFormScreen:<create>
+ManageRatingClass->RatingFormScreen:display()
+activate RatingFormScreen
+deactivate ManageRatingClass
+User->RatingFormScreen:Enter Details & Submit
+RatingFormScreen->ManageRatingClass:setRating()
+deactivate RatingFormScreen
+activate ManageRatingClass
+ManageRatingClass->DataBaseManager:publishRating()
+activate DataBaseManager
+DataBaseManager-->ManageRatingClass:return successful message
+deactivate DataBaseManager
+ManageRatingClass-->*RatingsScreen:<create>
+activate RatingsScreen
+alt Leave a Rating
+ManageRatingClass->RatingsScreen:display()
+deactivate RatingsScreen
+deactivate ManageRatingClass
 
-courtScreen->courtPage:display()
-deactivate courtScreen
-activate courtPage
-
-user->courtPage:                                  rateCourt()
-
-
-courtPage->ratingForm:display()
-deactivate courtPage
-activate ratingForm
-user->ratingForm:insertData()
-
-ratingForm->db:checkData()
-activate db
-ratingForm<--db:returnCheckData()
-
-ratingForm->db:publishRating()
-deactivate ratingForm
-deactivate db
-
-user->ratingScreen:seesRating()
-activate ratingScreen
-
-alt altcase 1
-courtPage->ratingScreen:display()
-activate courtPage
-
-db->ratingScreen:fetchData()
-deactivate courtPage
-activate db
-
-user->ratingScreen:reportRating()
-activate user
-
-ratingScreen->db:check()
-deactivate user
-
-ratingScreen<--db:returnCheck()
-deactivate db
-deactivate ratingScreen
-
-else case 2 
-
-courtScreen->myRatingScreen:display()
-activate myRatingScreen
-
-activate courtScreen
-db->myRatingScreen:fetchData()
-deactivate courtScreen
-activate db
-user->myRatingScreen:editRating()
-activate user
-myRatingScreen->rateEditingForm:display()
-
-activate rateEditingForm
-deactivate myRatingScreen
-
-user->rateEditingForm:editingRating()
-deactivate user
-
-rateEditingForm->db:publishRating()
-
-ratingConfirmationScreen<-db:ratingConfirmed
-activate ratingConfirmationScreen
-deactivate db
-deactivate rateEditingForm
-
-else case 3 
-deactivate ratingConfirmationScreen
-courtScreen->myRatingScreen:display()
-activate courtScreen 
-activate myRatingScreen
-
-db->myRatingScreen:fetchData()
-deactivate courtScreen
-
-user->myRatingScreen:deleteRating
-activate user
-
-
-myRatingScreen->db:publishRating
-activate db
-deactivate user
+else Edit Rating
+ManageRatingClass->RatingsScreen:display()
+activate ManageRatingClass
+activate RatingsScreen
+User->RatingsScreen:Choose My Ratings
+RatingsScreen->ManageRatingClass:getRatings()
+deactivate RatingsScreen
+ManageRatingClass->DataBaseManager:queryRatings()
+activate DataBaseManager
+DataBaseManager-->ManageRatingClass:return results
+deactivate DataBaseManager
+ManageRatingClass-->*MyRatingsScreen:<create>
+ManageRatingClass->MyRatingsScreen:display()
+deactivate ManageRatingClass
+activate MyRatingsScreen
+User->MyRatingsScreen:Choose Edit Rating
+MyRatingsScreen->ManageRatingClass:editRating()
+deactivate MyRatingsScreen
+activate ManageRatingClass
+ManageRatingClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->ManageRatingClass:return successful message
+deactivate DataBaseManager
+ManageRatingClass-->*EditRatingScreen:<create>
+ManageRatingClass->EditRatingScreen:display()
+deactivate ManageRatingClass
+activate EditRatingScreen
+User->EditRatingScreen:Edit Details & Submit
+EditRatingScreen->ManageRatingClass:changeRating()
+activate ManageRatingClass
+deactivate EditRatingScreen
+ManageRatingClass->DataBaseManager:updateRating()
+activate DataBaseManager
+DataBaseManager-->ManageRatingClass:return successful message
+deactivate DataBaseManager
+ManageRatingClass-->*ConfEditRatingScreen:<create>
+activate ConfEditRatingScreen
+ManageRatingClass->ConfEditRatingScreen:display()
+deactivate ConfEditRatingScreen
+deactivate ManageRatingClass
 end
-deactivate db
-deactivate myRatingScreen
