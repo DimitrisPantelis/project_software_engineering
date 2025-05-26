@@ -1,50 +1,110 @@
 actor User
-activate User
-participant paymentMethodScreen
-participant cardDetailsScreen
-participant enterEmailScreen
-participant payFaceToFaceScreen
-participant savedCardsScreen
-participant paymentSuccessful
-participant paymentFaildScreen
-database dataBase
+participant PaymentMethodScreen
+participant CardDetailsScreen
+participant ManagePaymentClass
+participant EnterEmailScreen
+participant SuccessfulPaymentScreen
+participant SavedCardsScreen
+participant InvalidCardDetailsScreen
+participant CashPaymentScreen
+participant DataBaseManager
 
-alt FalseData
-activate paymentMethodScreen
-User ->paymentMethodScreen:clickOnline()
-activate cardDetailsScreen
-paymentMethodScreen ->cardDetailsScreen:goTo()
-User ->cardDetailsScreen:enterData()
-User ->cardDetailsScreen:clickConfirm()
-activate dataBase
-cardDetailsScreen ->dataBase:checkData()
-deactivate cardDetailsScreen
-activate paymentFaildScreen
-paymentFaildScreen <--dataBase:wrongData()
-deactivate paymentFaildScreen
-paymentMethodScreen <--paymentFaildScreen:goTo()
-alt savedCard
-activate savedCardsScreen
-User->savedCardsScreen:clickPayBySavedCard()
-User ->savedCardsScreen:selectAndConfirm()
-savedCardsScreen ->dataBase:check()
-deactivate dataBase
-deactivate savedCardsScreen
-activate paymentSuccessful
-paymentSuccessful <--dataBase:dataOk()
-deactivate paymentSuccessful
-activate enterEmailScreen
-enterEmailScreen <--dataBase:display()
+ManagePaymentClass->PaymentMethodScreen:display()
+activate ManagePaymentClass
+activate PaymentMethodScreen
+
+alt Online Payment
+User->PaymentMethodScreen:Choose Online Payment
+PaymentMethodScreen->ManagePaymentClass:getPaymentMethod()
+deactivate PaymentMethodScreen
+ManagePaymentClass->DataBaseManager:queryCardDetails()
+activate DataBaseManager
+DataBaseManager-->ManagePaymentClass:return results
+
+deactivate DataBaseManager
+ManagePaymentClass->CardDetailsScreen:display()
+activate CardDetailsScreen
+deactivate ManagePaymentClass
+User->CardDetailsScreen:Enter Card Details
+CardDetailsScreen->ManagePaymentClass:setCardDetails()
+deactivate CardDetailsScreen
+activate ManagePaymentClass
+ManagePaymentClass->DataBaseManager:checkCardDetails()
+activate DataBaseManager
+alt Successful Payment
+DataBaseManager-->ManagePaymentClass:return successful message
+
+else Invalid Card Details
+DataBaseManager-->ManagePaymentClass:return failure message
+deactivate DataBaseManager
+ManagePaymentClass-->*InvalidCardDetailsScreen:<create>
+activate InvalidCardDetailsScreen
+ManagePaymentClass->InvalidCardDetailsScreen:display()
+deactivate ManagePaymentClass
+deactivate InvalidCardDetailsScreen
 end
-User ->enterEmailScreen:clickEmail()
-User ->enterEmailScreen:clickConfirm()
-enterEmailScreen ->paymentMethodScreen:receiptSent()
-deactivate enterEmailScreen
-deactivate paymentMethodScreen
+
+else Use Saved Card
+User->PaymentMethodScreen:Choose Saved Card
+activate PaymentMethodScreen
+PaymentMethodScreen->ManagePaymentClass:getPaymentMethod()
+activate ManagePaymentClass
+deactivate PaymentMethodScreen
+ManagePaymentClass->DataBaseManager:queryCardDetails()
+activate DataBaseManager
+DataBaseManager-->ManagePaymentClass:return results
+deactivate DataBaseManager
+ManagePaymentClass-->*SavedCardsScreen:<create>
+activate SavedCardsScreen
+ManagePaymentClass->SavedCardsScreen:display()
+deactivate ManagePaymentClass
+User->SavedCardsScreen:Choose a Card
+SavedCardsScreen->ManagePaymentClass:getCard()
+activate ManagePaymentClass
+deactivate SavedCardsScreen
+ManagePaymentClass->DataBaseManager:queryCard()
+activate DataBaseManager
+DataBaseManager-->ManagePaymentClass:return results
+ManagePaymentClass->DataBaseManager:checkCardDetails()
+DataBaseManager-->ManagePaymentClass:return successful message
+deactivate DataBaseManager
+deactivate ManagePaymentClass
+
+else Cash
+User->PaymentMethodScreen:Choose Cash
+activate PaymentMethodScreen
+PaymentMethodScreen->ManagePaymentClass:getPaymentMethod()
+deactivate PaymentMethodScreen
+activate ManagePaymentClass
+ManagePaymentClass->DataBaseManager:changePaymentStatus()
+activate DataBaseManager
+DataBaseManager-->ManagePaymentClass:return successful message
+deactivate DataBaseManager
+ManagePaymentClass-->*CashPaymentScreen:<create>
+activate CashPaymentScreen
+ManagePaymentClass->CashPaymentScreen:display()
+deactivate CashPaymentScreen
+deactivate ManagePaymentClass
 end
-alt cash
-activate payFaceToFaceScreen
-User->payFaceToFaceScreen:clickPayByCash()
-User<--payFaceToFaceScreen:display()
-deactivate payFaceToFaceScreen
-end
+
+activate ManagePaymentClass
+ManagePaymentClass->EnterEmailScreen:display()
+activate EnterEmailScreen
+deactivate ManagePaymentClass
+
+User->EnterEmailScreen:Enter Email
+EnterEmailScreen->ManagePaymentClass:setEmail()
+activate ManagePaymentClass
+deactivate EnterEmailScreen
+ManagePaymentClass->DataBaseManager:checkEmail()
+activate DataBaseManager
+DataBaseManager-->ManagePaymentClass:return successful message
+deactivate DataBaseManager
+ManagePaymentClass-->User:sendEmail()
+ManagePaymentClass-->*SuccessfulPaymentScreen:<create>
+activate SuccessfulPaymentScreen
+ManagePaymentClass->SuccessfulPaymentScreen:display()
+deactivate SuccessfulPaymentScreen
+deactivate ManagePaymentClass
+
+
