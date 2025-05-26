@@ -1,5 +1,4 @@
-public class NoAvailCourtScreen(){
-
-    public void display(){}
+public class NoavailCourtScreen {
     
+     public void display(){}
 }

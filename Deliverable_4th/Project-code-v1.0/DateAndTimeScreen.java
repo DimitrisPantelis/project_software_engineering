@@ -1,12 +1,27 @@
-public class DateAndTimeScreen(){
+import java.time.LocalDate;
+import java.time.LocalTime;
 
-    private Date reservation_date;
-    private Time reservation_time;
+public class DateAndTimeScreen extends ManageDateAndTimeClass {
 
-    public void display(){}
-    public void showResults(){}
 
-    // public void back_button();
-    //public void continue_button();
+    public DateAndTimeScreen() {
+        super(); // κλήση του constructor της υπερκλάσης
+    }
 
+    public void display() {
+        System.out.println("Reservation Date: " + setDate());
+        System.out.println("Reservation Time: " + setTime());
+    }
+
+    public void showResults() {
+        // Π.χ. εμφάνιση αποτελεσμάτων κρατήσεων για την ημερομηνία/ώρα
+        super.showResults();
+    }
+    public void backButton() {
+        System.out.println("Back");
+    }
+
+    public void continueButton() {
+        System.out.println("Continue");
+    }
 }

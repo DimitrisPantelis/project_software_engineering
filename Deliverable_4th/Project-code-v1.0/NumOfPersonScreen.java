@@ -9,7 +9,5 @@ public class NumOfPersonScreen(){
     public void showResults(){
 
     }
-
-    // public void back_button();
-    //public void continue_button();
+    
 }
