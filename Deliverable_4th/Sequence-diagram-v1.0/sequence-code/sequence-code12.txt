@@ -1,69 +1,83 @@
 actor User
-activate User
 participant MainScreen
-participant Map
+participant MapScreen
+participant ManageMapClass
 participant FieldInfoScreen
 participant MoreInfoScreen
-participant searchFieldScreen
-database DataBase
+participant SearchFieldScreen
+participant DataBaseManager
 
-User->MainScreen:clickMap()
+ManageMapClass->MainScreen:display()
+activate ManageMapClass
 activate MainScreen
-MainScreen->Map:goTo()
-activate Map
+User->MainScreen:Choose Map
+MainScreen->ManageMapClass:setChoice()
 deactivate MainScreen
-
+ManageMapClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->ManageMapClass:return results
+deactivate DataBaseManager
+ManageMapClass->MapScreen:display()
+activate MapScreen
 alt More Info
-User->Map:clickPin()
-Map->DataBase:pinInfo()
-activate DataBase
-DataBase-->Map:returnPinInfo()
-create FieldInfoScreen
-Map->FieldInfoScreen:display()
+User->MapScreen:Choose a Pin
+MapScreen->ManageMapClass:getPinInfo()
+deactivate MapScreen
+ManageMapClass->DataBaseManager:queryPinInfo()
+activate DataBaseManager
+DataBaseManager-->ManageMapClass:return results
+deactivate DataBaseManager
+ManageMapClass-->*FieldInfoScreen:<create>
+ManageMapClass->FieldInfoScreen:display()
+deactivate ManageMapClass
 activate FieldInfoScreen
-deactivate Map
-User->FieldInfoScreen:clickMore()
-FieldInfoScreen->DataBase:morePinInfo()
-DataBase->FieldInfoScreen:returnMoreInfo()
-deactivate DataBase
-create MoreInfoScreen
-FieldInfoScreen->MoreInfoScreen:goTo()
-activate MoreInfoScreen
+User->FieldInfoScreen:Choose More Info
+FieldInfoScreen->ManageMapClass:getMoreInfo()
 deactivate FieldInfoScreen
-MoreInfoScreen->Map:back()
-deactivate MoreInfoScreen
-activate Map
-deactivate Map
+activate ManageMapClass
+ManageMapClass->DataBaseManager:queryMoreInfo()
+activate DataBaseManager
+DataBaseManager-->ManageMapClass:return results
+deactivate DataBaseManager
+ManageMapClass-->*MoreInfoScreen:<create>
+activate MoreInfoScreen
+ManageMapClass->MoreInfoScreen:display()
+
+deactivate ManageMapClass
+
 
 else Track
-User->Map:clickPin()
-Map->DataBase:pinInfo()
-activate DataBase
-DataBase-->Map:returnPinInfo()
-deactivate DataBase
-activate Map
-Map->FieldInfoScreen:display()
-activate FieldInfoScreen
-deactivate Map 
-User->FieldInfoScreen:clickTrack()
-FieldInfoScreen-->User:requestLocation()
-User->FieldInfoScreen:enterLocation
-FieldInfoScreen->FieldInfoScreen:showRoute()
-deactivate FieldInfoScreen
+User->MoreInfoScreen:Choose Tracking
+MoreInfoScreen->ManageMapClass:getLocation()
+activate ManageMapClass
+ManageMapClass-->User:requestLocation()
+deactivate ManageMapClass
+User->MoreInfoScreen:Enter Location
+MoreInfoScreen->ManageMapClass:setLocation()
+deactivate MoreInfoScreen
+activate ManageMapClass
+ManageMapClass->DataBaseManager:queryRoute()
+activate DataBaseManager
+DataBaseManager-->ManageMapClass:return results
+deactivate DataBaseManager
+ManageMapClass->MoreInfoScreen:showResults()
+activate MoreInfoScreen
+deactivate MoreInfoScreen
+deactivate ManageMapClass
 
 else Search
-User->Map:clickSearch()
-activate Map
-create searchFieldScreen
-Map->searchFieldScreen:display()
-activate searchFieldScreen
-deactivate Map
-User->searchFieldScreen:searchName()
-searchFieldScreen->DataBase:searchInfo()
-activate DataBase
-DataBase-->searchFieldScreen:returnPin()
-deactivate DataBase
-deactivate searchFieldScreen
+User->MapScreen:Choose Search
+activate MapScreen
+MapScreen->ManageMapClass:getResults()
+deactivate MapScreen
+activate ManageMapClass
+ManageMapClass->DataBaseManager:queryResults()
+activate DataBaseManager
+DataBaseManager-->ManageMapClass:return results
+deactivate DataBaseManager
+ManageMapClass-->*SearchFieldScreen:<create>
+activate SearchFieldScreen
+ManageMapClass->SearchFieldScreen:display()
+deactivate SearchFieldScreen
+deactivate ManageMapClass
 end
-
-deactivate User
