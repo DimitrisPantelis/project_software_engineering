@@ -34,6 +34,7 @@ ManageCourtClass->DataBaseManager:submit()
 activate DataBaseManager
 DataBaseManager-->ManageCourtClass:return success message
 deactivate DataBaseManager
+ManageCourtClass-->*DateAndTimeScreen:<create>
 ManageCourtClass->DateAndTimeScreen:display()
 activate DateAndTimeScreen
 deactivate ManageCourtClass
@@ -69,6 +70,7 @@ deactivate NoFreeHoursScreen
 end
 
 activate ManageDateAndTimeClass
+ManageDateAndTimeClass-->*NumOfPersonScreen:<create>
 ManageDateAndTimeClass->NumOfPersonScreen:display()
 deactivate ManageDateAndTimeClass
 activate NumOfPersonScreen
@@ -106,6 +108,7 @@ end
 
 
 activate ManagePersonClass
+ManagePersonClass-->*PaymentMethodScreen:<create>
 ManagePersonClass->PaymentMethodScreen:display()
 activate PaymentMethodScreen
 deactivate ManagePersonClass
@@ -122,6 +125,7 @@ deactivate PaymentMethodScreen
 activate SuccessPaymentScreen
 ManagePaymentClass->SuccessPaymentScreen:display()
 deactivate SuccessPaymentScreen
+ManagePaymentClass-->*BookingScreen:<create>
 ManagePaymentClass->BookingScreen:display()
 deactivate ManagePaymentClass
 activate BookingScreen
