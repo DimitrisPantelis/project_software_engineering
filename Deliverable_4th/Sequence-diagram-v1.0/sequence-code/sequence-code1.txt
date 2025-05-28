@@ -33,32 +33,28 @@ activate DataBaseManager
 DataBaseManager-->ManageRegClass:return results
 deactivate DataBaseManager
 alt Successful Sign Up
-ManageRegClass->RegScreen:showResults()
-activate RegScreen
+ManageRegClass-->*Account:<create>
 deactivate ManageRegClass
-RegScreen-->*Account:<create>
-deactivate RegScreen
 activate Account
 Account->ManageAccountClass:getConfirmation()
 activate ManageAccountClass
 deactivate Account
 
 else Existing Email
-
-ManageRegClass->RegScreen:showResults()
+deactivate ManageAccountClass
 activate ManageRegClass
-activate RegScreen
-RegScreen-->*ExistAccScreen:<create>
-deactivate RegScreen
+ManageRegClass-->*ExistAccScreen:<create>
+activate ExistAccScreen
 ManageRegClass->ExistAccScreen:display()
+deactivate ExistAccScreen
 deactivate ManageRegClass
 
-activate ExistAccScreen
 
-ExistAccScreen-->*LoginScreen:<create>
+
+ManageRegClass-->*LoginScreen:<create>
 activate LoginScreen
 deactivate ExistAccScreen
-ManageAccountClass->LoginScreen:display()
+ManageRegClass->LoginScreen:display()
 deactivate LoginScreen
 deactivate ManageAccountClass
 
@@ -67,7 +63,7 @@ ManageRegClass->RegScreen:showResults()
 activate ManageRegClass
 activate RegScreen
 
-RegScreen-->*WeakPassScreen:<create>
+ManageRegClass-->*WeakPassScreen:<create>
 ManageRegClass->WeakPassScreen:display()
 activate WeakPassScreen
 
