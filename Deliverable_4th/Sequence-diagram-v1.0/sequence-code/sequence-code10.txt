@@ -4,6 +4,7 @@ participant CardDetailsScreen
 participant ManagePaymentClass
 participant EnterEmailScreen
 participant SuccessfulPaymentScreen
+participant ElReceipt
 participant SavedCardsScreen
 participant InvalidCardDetailsScreen
 participant CashPaymentScreen
@@ -105,6 +106,6 @@ ManagePaymentClass-->*SuccessfulPaymentScreen:<create>
 activate SuccessfulPaymentScreen
 ManagePaymentClass->SuccessfulPaymentScreen:display()
 deactivate SuccessfulPaymentScreen
+ManagePaymentClass-->*ElReceipt:<create>
 deactivate ManagePaymentClass
-
 
