@@ -4,7 +4,7 @@ participant MyProfileScreen
 participant ManageProfileClass
 participant EditProfileScreen
 participant ConfUpdateScreen
-participant UpdatedProfileScreen
+participant UpdatedProfile
 participant InvalidDataScreen
 participant DataBaseManager
 
@@ -44,10 +44,10 @@ ManageProfileClass-->*ConfUpdateScreen:<create>
 activate ConfUpdateScreen
 ManageProfileClass->ConfUpdateScreen:display()
 deactivate ConfUpdateScreen
-ManageProfileClass-->*UpdatedProfileScreen:<create>
-activate UpdatedProfileScreen
-ManageProfileClass->UpdatedProfileScreen:display()
-deactivate UpdatedProfileScreen
+ManageProfileClass-->*UpdatedProfile:<create>
+activate UpdatedProfile
+ManageProfileClass->UpdatedProfile:display()
+deactivate UpdatedProfile
 
 else Invalid Edit
 ManageProfileClass->DataBaseManager:checkInfo()
