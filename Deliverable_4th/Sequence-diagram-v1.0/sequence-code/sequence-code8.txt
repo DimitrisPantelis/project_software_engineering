@@ -7,6 +7,7 @@ participant RatingsScreen
 participant MyRatingsScreen
 participant EditRatingScreen
 participant ConfEditRatingScreen
+participant ConfDeleteRatingScreen
 participant DataBaseManager
 
 ManageRatingClass->FieldsScreen:display()
@@ -95,4 +96,18 @@ activate ConfEditRatingScreen
 ManageRatingClass->ConfEditRatingScreen:display()
 deactivate ConfEditRatingScreen
 deactivate ManageRatingClass
+else Delete Rating
+User->MyRatingsScreen:Choose Delete Rating
+activate MyRatingsScreen
+MyRatingsScreen->ManageRatingClass:deleteRating()
+deactivate MyRatingsScreen
+activate ManageRatingClass
+ManageRatingClass->DataBaseManager:submit()
+activate DataBaseManager
+DataBaseManager-->ManageRatingClass:return successful message
+deactivate DataBaseManager
+ManageRatingClass-->*ConfDeleteRatingScreen:<create>
+activate ConfDeleteRatingScreen
+ManageRatingClass->ConfDeleteRatingScreen:display()
+deactivate ConfDeleteRatingScreen
 end
