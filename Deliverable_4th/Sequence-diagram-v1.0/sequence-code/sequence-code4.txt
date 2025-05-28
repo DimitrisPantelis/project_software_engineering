@@ -19,15 +19,15 @@ participant ManageBookingClass
 ManageFieldClass->FieldsScreen:display()
 activate ManageFieldClass
 activate FieldsScreen
-FieldsScreen->ManageFieldClass:getCourts()
+FieldsScreen->ManageFieldClass:getFields()
 deactivate FieldsScreen
-ManageFieldClass->DataBaseManager:queryCourts()
+ManageFieldClass->DataBaseManager:queryFields()
 activate DataBaseManager
 DataBaseManager-->ManageFieldClass:return results
 deactivate DataBaseManager
 ManageFieldClass->FieldsScreen:showResults()
 activate FieldsScreen
-User->FieldsScreen:Choose Court
+User->FieldsScreen:Choose Field
 FieldsScreen->ManageFieldClass:setChoice()
 deactivate FieldsScreen
 ManageFieldClass->DataBaseManager:submit()
