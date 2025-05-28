@@ -4,6 +4,7 @@ participant MapScreen
 participant ManageMapClass
 participant FieldInfoScreen
 participant MoreInfoScreen
+participant EnterLocationScreen
 participant SearchFieldScreen
 participant DataBaseManager
 
@@ -49,12 +50,15 @@ deactivate ManageMapClass
 else Track
 User->MoreInfoScreen:Choose Tracking
 MoreInfoScreen->ManageMapClass:getLocation()
+deactivate MoreInfoScreen
 activate ManageMapClass
+ManageMapClass-->*EnterLocationScreen:<create>
 ManageMapClass-->User:requestLocation()
 deactivate ManageMapClass
-User->MoreInfoScreen:Enter Location
-MoreInfoScreen->ManageMapClass:setLocation()
-deactivate MoreInfoScreen
+User->EnterLocationScreen:Enter Location
+activate EnterLocationScreen
+EnterLocationScreen->ManageMapClass:setLocation()
+deactivate EnterLocationScreen
 activate ManageMapClass
 ManageMapClass->DataBaseManager:queryRoute()
 activate DataBaseManager
