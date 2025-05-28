@@ -1,6 +1,7 @@
 actor User
-participant CourtsScreen
-participant ManageCourtClass
+participant FieldsScreen
+participant ManageFieldClass
+participant ResultsSearchFieldScreen
 participant DateAndTimeScreen
 participant ManageDateAndTimeClass
 participant NoFreeHoursScreen
@@ -10,33 +11,40 @@ participant TooManyPersonsScreen
 participant PaymentMethodScreen
 participant ManagePaymentClass
 participant SuccessPaymentScreen
-participant BookingScreen
+participant Booking
 participant ManageBookingClass
+participant Email
 participant DataBaseManager
 
 participant ManageBookingClass
 
-ManageCourtClass->CourtsScreen:display()
-activate ManageCourtClass
-activate CourtsScreen
-CourtsScreen->ManageCourtClass:getCourts()
-deactivate CourtsScreen
-ManageCourtClass->DataBaseManager:queryCourts()
+ManageFieldClass->FieldsScreen:display()
+activate ManageFieldClass
+activate FieldsScreen
+FieldsScreen->ManageFieldClass:getFields()
+deactivate FieldsScreen
+ManageFieldClass->DataBaseManager:queryFields()
 activate DataBaseManager
-DataBaseManager-->ManageCourtClass:return results
+DataBaseManager-->ManageFieldClass:return results
 deactivate DataBaseManager
-ManageCourtClass->CourtsScreen:showResults()
-activate CourtsScreen
-User->CourtsScreen:Choose Court
-CourtsScreen->ManageCourtClass:setChoice()
-deactivate CourtsScreen
-ManageCourtClass->DataBaseManager:submit()
+ManageFieldClass-->*ResultsSearchFieldScreen:<create>
+ManageFieldClass->ResultsSearchFieldScreen:display()
+deactivate ManageFieldClass
+activate ResultsSearchFieldScreen
+User->ResultsSearchFieldScreen:Choose Field
+ResultsSearchFieldScreen->ManageFieldClass:setChoice()
+deactivate ResultsSearchFieldScreen
+activate ManageFieldClass
+ManageFieldClass->DataBaseManager:submit()
 activate DataBaseManager
-DataBaseManager-->ManageCourtClass:return success message
+DataBaseManager-->ManageFieldClass:return success message
+deactivate ManageFieldClass
 deactivate DataBaseManager
-ManageCourtClass->DateAndTimeScreen:display()
+ManageFieldClass-->*DateAndTimeScreen:<create>
+activate ManageFieldClass
+ManageFieldClass->DateAndTimeScreen:display()
 activate DateAndTimeScreen
-deactivate ManageCourtClass
+deactivate ManageFieldClass
 User->DateAndTimeScreen:Choose Date
 DateAndTimeScreen->ManageDateAndTimeClass:setDate()
 activate ManageDateAndTimeClass
@@ -58,10 +66,8 @@ deactivate DateAndTimeScreen
 
 deactivate ManageDateAndTimeClass
 else No available Hours
-activate DateAndTimeScreen
 activate ManageDateAndTimeClass
-DateAndTimeScreen-->*NoFreeHoursScreen:<create>
-deactivate DateAndTimeScreen
+ManageDateAndTimeClass-->*NoFreeHoursScreen:<create>
 activate NoFreeHoursScreen
 ManageDateAndTimeClass->NoFreeHoursScreen:display()
 deactivate ManageDateAndTimeClass
@@ -69,6 +75,7 @@ deactivate NoFreeHoursScreen
 end
 
 activate ManageDateAndTimeClass
+ManageDateAndTimeClass-->*NumOfPersonScreen:<create>
 ManageDateAndTimeClass->NumOfPersonScreen:display()
 deactivate ManageDateAndTimeClass
 activate NumOfPersonScreen
@@ -96,8 +103,8 @@ activate DataBaseManager
 DataBaseManager-->ManagePersonClass:return failure message
 deactivate DataBaseManager
 ManagePersonClass->NumOfPersonScreen:showResults()
-NumOfPersonScreen-->*TooManyPersonsScreen:<create>
 deactivate NumOfPersonScreen
+ManagePersonClass-->*TooManyPersonsScreen:<create>
 activate TooManyPersonsScreen
 ManagePersonClass->TooManyPersonsScreen:display()
 deactivate TooManyPersonsScreen
@@ -106,6 +113,7 @@ end
 
 
 activate ManagePersonClass
+ManagePersonClass-->*PaymentMethodScreen:<create>
 ManagePersonClass->PaymentMethodScreen:display()
 activate PaymentMethodScreen
 deactivate ManagePersonClass
@@ -117,21 +125,23 @@ activate DataBaseManager
 DataBaseManager-->ManagePaymentClass:return success message
 deactivate DataBaseManager
 ManagePaymentClass->PaymentMethodScreen:ShowResults()
-PaymentMethodScreen-->*SuccessPaymentScreen:<create>
 deactivate PaymentMethodScreen
+ManagePaymentClass-->*SuccessPaymentScreen:<create>
+
 activate SuccessPaymentScreen
 ManagePaymentClass->SuccessPaymentScreen:display()
 deactivate SuccessPaymentScreen
-ManagePaymentClass->BookingScreen:display()
+ManagePaymentClass-->*Booking:<create>
 deactivate ManagePaymentClass
-activate BookingScreen
-BookingScreen->ManageBookingClass:setBooking()
+activate Booking
+Booking->ManageBookingClass:setBooking()
 activate ManageBookingClass
 ManageBookingClass->DataBaseManager:submit()
 activate DataBaseManager
 DataBaseManager-->ManageBookingClass:return success message
 deactivate DataBaseManager
-ManageBookingClass->BookingScreen:showResults()
-deactivate BookingScreen
+ManageBookingClass->Booking:showResults()
+deactivate Booking
 ManageBookingClass->User:sendEmail()
+ManageBookingClass-->*Email:<create>
 deactivate ManageBookingClass

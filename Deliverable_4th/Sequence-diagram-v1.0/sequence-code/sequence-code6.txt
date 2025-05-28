@@ -4,6 +4,7 @@ participant OppBookingScreen
 participant ManageOpponentClass
 participant ParticipationFormScreen
 participant ParticipationConfScreen
+participant Participation
 participant MyBookingsScreen
 participant NoOpponentScreen
 participant DataBaseManager
@@ -44,6 +45,7 @@ ManageOpponentClass-->*ParticipationConfScreen:<create>
 activate ParticipationConfScreen
 ManageOpponentClass->ParticipationConfScreen:display()
 deactivate ParticipationConfScreen
+ManageOpponentClass-->*Participation:<create>
 deactivate ManageOpponentClass
 
 else Request Opponent

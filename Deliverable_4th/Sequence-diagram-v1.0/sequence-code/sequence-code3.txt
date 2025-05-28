@@ -1,71 +1,71 @@
 actor User
 participant MainScreen
-participant CourtsScreen
-participant ManageCourtClass
-participant NoAvailableCourtScreen
+participant FieldsScreen
+participant ManageFieldClass
+participant NoAvailableFieldScreen
 participant DataBaseManager
 
-activate ManageCourtClass
-ManageCourtClass->MainScreen:display()
+activate ManageFieldClass
+ManageFieldClass->MainScreen:display()
 activate MainScreen
 User->MainScreen:Choose Sport
-MainScreen->ManageCourtClass:getSport()
+MainScreen->ManageFieldClass:getSport()
 deactivate MainScreen 
-ManageCourtClass->DataBaseManager:querySport()
-DataBaseManager-->ManageCourtClass:return results
-ManageCourtClass->CourtsScreen:display()
-activate CourtsScreen
-CourtsScreen->ManageCourtClass:getCourts()
-ManageCourtClass->DataBaseManager:queryCourts()
+ManageFieldClass->DataBaseManager:querySport()
+DataBaseManager-->ManageFieldClass:return results
+ManageFieldClass->FieldsScreen:display()
+activate FieldsScreen
+FieldsScreen->ManageFieldClass:getFields()
+ManageFieldClass->DataBaseManager:queryFields()
 activate DataBaseManager
-DataBaseManager-->ManageCourtClass:return results
+DataBaseManager-->ManageFieldClass:return results
 deactivate DataBaseManager
-ManageCourtClass->CourtsScreen:showResults()
+ManageFieldClass->FieldsScreen:showResults()
 
 alt Apply Filters
-User->CourtsScreen:Apply Filters
-CourtsScreen->ManageCourtClass:setFilters()
-CourtsScreen->ManageCourtClass:getCourts()
-ManageCourtClass->DataBaseManager:queryCourts()
+User->FieldsScreen:Apply Filters
+FieldsScreen->ManageFieldClass:setFilters()
+FieldsScreen->ManageFieldClass:getFields()
+ManageFieldClass->DataBaseManager:queryFields()
 activate DataBaseManager
-DataBaseManager-->ManageCourtClass:return results
-ManageCourtClass->CourtsScreen:showResults()
-User->CourtsScreen:Choose Court
-CourtsScreen->ManageCourtClass:setChoice()
-deactivate CourtsScreen
-ManageCourtClass->DataBaseManager:submit()
-deactivate ManageCourtClass
+DataBaseManager-->ManageFieldClass:return results
+ManageFieldClass->FieldsScreen:showResults()
+User->FieldsScreen:Choose Court
+FieldsScreen->ManageFieldClass:setChoice()
+deactivate FieldsScreen
+ManageFieldClass->DataBaseManager:submit()
+deactivate ManageFieldClass
 deactivate DataBaseManager
 
 else Search By Region
-User->CourtsScreen:Search Region
-activate CourtsScreen
-CourtsScreen->ManageCourtClass:setSearchBar()
-activate ManageCourtClass
-CourtsScreen->ManageCourtClass:getCourts()
-ManageCourtClass->DataBaseManager:queryCourts()
+User->FieldsScreen:Search Region
+activate FieldsScreen
+FieldsScreen->ManageFieldClass:setSearchBar()
+activate ManageFieldClass
+FieldsScreen->ManageFieldClass:getFields()
+ManageFieldClass->DataBaseManager:queryFields()
 activate DataBaseManager
-DataBaseManager-->ManageCourtClass:return results
+DataBaseManager-->ManageFieldClass:return results
 deactivate DataBaseManager
-ManageCourtClass->CourtsScreen:showResults()
-deactivate CourtsScreen
-deactivate ManageCourtClass
+ManageFieldClass->FieldsScreen:showResults()
+deactivate FieldsScreen
+deactivate ManageFieldClass
 
 else No Available Court
-User->CourtsScreen:Search Region
-activate CourtsScreen
-CourtsScreen->ManageCourtClass:setSearchBar()
-activate ManageCourtClass
-CourtsScreen->ManageCourtClass:getCourts()
-ManageCourtClass->DataBaseManager:queryCourts()
+User->FieldsScreen:Search Region
+activate FieldsScreen
+FieldsScreen->ManageFieldClass:setSearchBar()
+activate ManageFieldClass
+FieldsScreen->ManageFieldClass:getFields()
+ManageFieldClass->DataBaseManager:queryFields()
 activate DataBaseManager
-DataBaseManager-->ManageCourtClass:return results
+DataBaseManager-->ManageFieldClass:return results
 deactivate DataBaseManager
-ManageCourtClass->CourtsScreen:showResults()
-CourtsScreen-->*NoAvailableCourtScreen:<create>
-deactivate CourtsScreen
-ManageCourtClass->NoAvailableCourtScreen:display()
-activate NoAvailableCourtScreen
-deactivate ManageCourtClass
+ManageFieldClass->FieldsScreen:showResults()
+FieldsScreen-->*NoAvailableFieldScreen:<create>
+deactivate FieldsScreen
+ManageFieldClass->NoAvailableFieldScreen:display()
+activate NoAvailableFieldScreen
+deactivate ManageFieldClass
 end
-deactivate NoAvailableCourtScreen
+deactivate NoAvailableFieldScreen

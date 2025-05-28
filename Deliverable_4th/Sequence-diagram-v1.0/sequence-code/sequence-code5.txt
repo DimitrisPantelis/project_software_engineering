@@ -3,11 +3,11 @@ participant ProfileScreen
 participant MyBookingsScreen
 participant BookingDetailsScreen
 participant ManageBookingClass
+participant Email
 participant EditConfirmationScreen
 participant SuccessfulCancellationScreen
 participant NoAvailableDayScreen
 participant DataBaseManager
-
 
 ManageBookingClass->ProfileScreen:display()
 activate ManageBookingClass
@@ -44,6 +44,7 @@ activate EditConfirmationScreen
 ManageBookingClass->EditConfirmationScreen:display()
 deactivate EditConfirmationScreen
 ManageBookingClass-->User:sendEmail()
+ManageBookingClass-->*Email:<create>
 deactivate ManageBookingClass
 
 else Cancel Booking

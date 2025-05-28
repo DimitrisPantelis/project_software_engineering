@@ -1,100 +1,90 @@
 actor User
 participant MainScreen
 participant TournSearchScreen
+participant TournManageClass
+participant Email
 participant TournFormPartScreen
-participant NoTournAvailScreen
-participant AlreadyPartScreen
+participant NoAvailTournScreen
 participant ConfPartTournScreen
-participant Tournament
-participant EmailDataPart
+participant ParticipationTournament
+participant AlreadyPartScreen
+participant DataBaseManager
 
+participant TournManageClass
 
-participant ListUsersOfUpcomingTourn
-database Database
-
-
-activate User
+TournManageClass->MainScreen:display()
+activate TournManageClass
 activate MainScreen
-
-User->MainScreen:loginToApp()
-activate TournSearchScreen
-MainScreen->TournSearchScreen:participateToTourn()
-MainScreen->TournSearchScreen:displayInfo()
+User->MainScreen:Choose Participate to Tournament
+MainScreen->TournManageClass:getTournaments()
 deactivate MainScreen
-
-alt AvailableTournaments
-
-User->TournSearchScreen:selectTourn()
+TournManageClass->DataBaseManager:queryTournament()
+activate DataBaseManager
+DataBaseManager-->TournManageClass:return results
+deactivate DataBaseManager
+TournManageClass->TournSearchScreen:display()
+activate TournSearchScreen
+alt Available Tournaments
+User->TournSearchScreen:Choose a Tournament
+TournSearchScreen->TournManageClass:setChoice()
 deactivate TournSearchScreen
+TournManageClass->DataBaseManager:submitTourn()
+activate DataBaseManager
+DataBaseManager-->TournManageClass:return successful message
+deactivate DataBaseManager
+TournManageClass->TournFormPartScreen:display()
+deactivate TournManageClass
 activate TournFormPartScreen
-
-TournSearchScreen->TournFormPartScreen:goTo()
-
-User->TournFormPartScreen:enterTournDetails()
-else 
-
-
-create NoTournAvailScreen
-activate NoTournAvailScreen
-
-TournFormPartScreen-->NoTournAvailScreen:<create>
-TournFormPartScreen->NoTournAvailScreen:display()
-NoTournAvailScreen->NoTournAvailScreen:selection_NotificationForFutureTourn()
-User->NoTournAvailScreen:selectToNotify()
-activate Database
-NoTournAvailScreen-->Database:enterUserData()
-activate MainScreen
-MainScreen<--NoTournAvailScreen:returnToMainScreen()
-deactivate MainScreen
-deactivate Database
-deactivate NoTournAvailScreen
-
-
-end
-
-alt CorrectTournDetails
-
-activate Database
-TournFormPartScreen->Database:checkTournDetails()
-TournFormPartScreen<--Database:return Validation()
-deactivate Database
-
-User->TournFormPartScreen:completeForm&Submit()
-create Tournament
-activate Tournament
-
-TournFormPartScreen-->Tournament:<create>
-deactivate Tournament
-else DuplicateTournDetails
-
-create AlreadyPartScreen
-activate AlreadyPartScreen
-
-TournFormPartScreen-->AlreadyPartScreen:<create>
-TournFormPartScreen->AlreadyPartScreen:displayMessage()
-activate EmailDataPart
-AlreadyPartScreen->EmailDataPart:sendConfirmEmail()
-deactivate EmailDataPart
-activate MainScreen
-MainScreen<--AlreadyPartScreen:returnToMainScreen()
-deactivate AlreadyPartScreen
-deactivate MainScreen
-
-end
-
-activate EmailDataPart
+User->TournFormPartScreen:Enter Tournament Details & Submit
 deactivate TournFormPartScreen
-User<--EmailDataPart:sendConfirmEmail()
-activate Database
-EmailDataPart->Database:UpdatePartStatus()
-deactivate Database
-deactivate EmailDataPart
-activate TournSearchScreen
-create ConfPartTournScreen
+else No Available Tournaments 
+TournManageClass-->*NoAvailTournScreen:<create>
+activate TournManageClass
+TournManageClass->NoAvailTournScreen:display()
+activate NoAvailTournScreen
+deactivate TournManageClass
+NoAvailTournScreen->NoAvailTournScreen:enableNotifications()
+User->NoAvailTournScreen:Choose Notifications for Future Tournaments
+NoAvailTournScreen->TournManageClass:setChoice()
+deactivate NoAvailTournScreen
+activate TournManageClass
+TournManageClass->DataBaseManager:addToList()
+activate DataBaseManager
+DataBaseManager->TournManageClass:return successful message
+deactivate DataBaseManager
+
+deactivate TournManageClass
+end
 
 
+activate TournFormPartScreen
+TournFormPartScreen->TournManageClass:setDetails()
+deactivate TournFormPartScreen
+activate TournManageClass
+TournManageClass->DataBaseManager:checkDetails()
+activate DataBaseManager
+DataBaseManager-->TournManageClass:return results
+deactivate DataBaseManager
+alt Correct Details
+TournManageClass-->*ConfPartTournScreen:<create>
 activate ConfPartTournScreen
-TournSearchScreen-->ConfPartTournScreen:<create>
-TournSearchScreen<-ConfPartTournScreen:displayMessage()
+TournManageClass->ConfPartTournScreen:display()
 deactivate ConfPartTournScreen
-deactivate TournSearchScreen
+TournManageClass-->*ParticipationTournament:<create>
+TournManageClass-->User:sendEmail()
+TournManageClass-->*Email:<create>
+deactivate TournManageClass
+
+else Already Part Of
+activate TournManageClass
+TournManageClass-->*AlreadyPartScreen:<create>
+activate AlreadyPartScreen
+TournManageClass->AlreadyPartScreen:display()
+deactivate AlreadyPartScreen
+TournManageClass-->User:sendEmail()
+
+TournManageClass->MainScreen:display()
+activate MainScreen
+deactivate MainScreen
+deactivate TournManageClass
+end
