@@ -15,8 +15,8 @@ ManageFieldClass->DataBaseManager:querySport()
 DataBaseManager-->ManageFieldClass:return results
 ManageFieldClass->FieldsScreen:display()
 activate FieldsScreen
-FieldsScreen->ManageFieldClass:getCourts()
-ManageFieldClass->DataBaseManager:queryCourts()
+FieldsScreen->ManageFieldClass:getFields()
+ManageFieldClass->DataBaseManager:queryFields()
 activate DataBaseManager
 DataBaseManager-->ManageFieldClass:return results
 deactivate DataBaseManager
@@ -25,8 +25,8 @@ ManageFieldClass->FieldsScreen:showResults()
 alt Apply Filters
 User->FieldsScreen:Apply Filters
 FieldsScreen->ManageFieldClass:setFilters()
-FieldsScreen->ManageFieldClass:getCourts()
-ManageFieldClass->DataBaseManager:queryCourts()
+FieldsScreen->ManageFieldClass:getFields()
+ManageFieldClass->DataBaseManager:queryFields()
 activate DataBaseManager
 DataBaseManager-->ManageFieldClass:return results
 ManageFieldClass->FieldsScreen:showResults()
@@ -42,8 +42,8 @@ User->FieldsScreen:Search Region
 activate FieldsScreen
 FieldsScreen->ManageFieldClass:setSearchBar()
 activate ManageFieldClass
-FieldsScreen->ManageFieldClass:getCourts()
-ManageFieldClass->DataBaseManager:queryCourts()
+FieldsScreen->ManageFieldClass:getFields()
+ManageFieldClass->DataBaseManager:queryFields()
 activate DataBaseManager
 DataBaseManager-->ManageFieldClass:return results
 deactivate DataBaseManager
@@ -56,8 +56,8 @@ User->FieldsScreen:Search Region
 activate FieldsScreen
 FieldsScreen->ManageFieldClass:setSearchBar()
 activate ManageFieldClass
-FieldsScreen->ManageFieldClass:getCourts()
-ManageFieldClass->DataBaseManager:queryCourts()
+FieldsScreen->ManageFieldClass:getFields()
+ManageFieldClass->DataBaseManager:queryFields()
 activate DataBaseManager
 DataBaseManager-->ManageFieldClass:return results
 deactivate DataBaseManager
