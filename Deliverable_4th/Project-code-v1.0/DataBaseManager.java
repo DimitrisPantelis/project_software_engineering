@@ -66,10 +66,6 @@ public class DataBaseManager(){
         // TODO: Fetch sport-related data
     }
 
-    public void queryCourts() {
-        // TODO: Fetch court availability
-    }
-
     public String queryFields() {
         // TODO: Return field names or metadata
         return "";
@@ -160,6 +156,18 @@ public class DataBaseManager(){
         // TODO: Submit general information
         return true;
     }
+
+    
+    public void queryTournament(){}
+    public boolean submitTourn(){}
+    public void addToList(){}
+    public boolean checkDetails(){}
+
+    public boolean queryPininfo(){}
+    public boolean queryMoreInfo(){}
+    public boolean queryRout(){}
+    public void queryResults(){}
+
 }
 =======
     

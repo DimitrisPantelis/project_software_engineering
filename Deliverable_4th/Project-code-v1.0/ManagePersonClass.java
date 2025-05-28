@@ -1,5 +1,8 @@
 public class ManagePersonClass(){
 
-    public int setNumber(){}
+    private int numOfPerson;
+    public int setNumber(){
+ 
+    }
     
 }
