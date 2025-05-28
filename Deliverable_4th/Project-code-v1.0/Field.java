@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class FieldScreen {
+public class Field {
 
     private String name;
     private String sport;
@@ -8,7 +8,7 @@ public class FieldScreen {
     private double price;
     private boolean available;
 
-    public void public class FieldScreen(String name, String sport, String region, double price, boolean available) {
+    public void public class Field(String name, String sport, String region, double price, boolean available) {
         this.name = name;
         this.sport = sport;
         this.region = region;

@@ -1,4 +1,4 @@
-public class BookingDetailsScreen {
+public class MyBookings {
     public void display(){
         
     }
