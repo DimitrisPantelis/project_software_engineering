@@ -2,9 +2,11 @@ actor User
 participant MainScreen
 participant TournSearchScreen
 participant TournManageClass
+participant Email
 participant TournFormPartScreen
 participant NoAvailTournScreen
 participant ConfPartTournScreen
+participant ParticipationTournament
 participant AlreadyPartScreen
 participant DataBaseManager
 
@@ -35,7 +37,6 @@ deactivate TournManageClass
 activate TournFormPartScreen
 User->TournFormPartScreen:Enter Tournament Details & Submit
 deactivate TournFormPartScreen
-
 else No Available Tournaments 
 TournManageClass-->*NoAvailTournScreen:<create>
 activate TournManageClass
@@ -69,7 +70,9 @@ TournManageClass-->*ConfPartTournScreen:<create>
 activate ConfPartTournScreen
 TournManageClass->ConfPartTournScreen:display()
 deactivate ConfPartTournScreen
+TournManageClass-->*ParticipationTournament:<create>
 TournManageClass-->User:sendEmail()
+TournManageClass-->*Email:<create>
 deactivate TournManageClass
 
 else Already Part Of
@@ -79,6 +82,7 @@ activate AlreadyPartScreen
 TournManageClass->AlreadyPartScreen:display()
 deactivate AlreadyPartScreen
 TournManageClass-->User:sendEmail()
+
 TournManageClass->MainScreen:display()
 activate MainScreen
 deactivate MainScreen
