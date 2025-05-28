@@ -53,10 +53,11 @@ MoreInfoScreen->ManageMapClass:getLocation()
 deactivate MoreInfoScreen
 activate ManageMapClass
 ManageMapClass-->*EnterLocationScreen:<create>
+ManageMapClass->EnterLocationScreen:display()
+activate EnterLocationScreen
 ManageMapClass-->User:requestLocation()
 deactivate ManageMapClass
 User->EnterLocationScreen:Enter Location
-activate EnterLocationScreen
 EnterLocationScreen->ManageMapClass:setLocation()
 deactivate EnterLocationScreen
 activate ManageMapClass
