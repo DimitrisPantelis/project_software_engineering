@@ -1,4 +1,4 @@
-public class AdminManageClass {
+public class AdminManageClass extends User{
 
     private String username;
     private String password;
