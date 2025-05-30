@@ -1,36 +1,32 @@
 public class ManageProfileClass {
+    private DataBaseManager db = new DataBaseManager();
 
-    private String phoneNumber;
-    private String profilePicturePath;  
-
-    public ManageProfileClass( String phoneNumber, String profilePicturePath) {
-        this.phoneNumber = phoneNumber;
-        this.profilePicturePath = profilePicturePath;
+    public boolean submitProfileAccess(int userId) {
+        // Πιθανόν logging/αρχικοποίηση
+        return true;
     }
 
-    // Επιλογή τι θέλεις να αλλάξεις (π.χ. "name", "photo", "email")
-    public void setChoice(String choice) {
-        System.out.println("Επιλέχθηκε η αλλαγή του: " + choice);
+    public User getEditProfile(int userId) {
+        return db.queryEditProfile(userId);
     }
 
-    // Επιστρέφει τα τωρινά στοιχεία του προφίλ
-    public void getEditProfile() {
-        System.out.println("=== Τρέχον Προφίλ ===");
-        System.out.println("Τηλέφωνο: " + phoneNumber);
-        System.out.println("Φωτογραφία προφίλ: " + profilePicturePath);
-    }
-
-    // Ενημέρωση στοιχείων προφίλ
-    public void setInfo(String newUsername, String newEmail, String newPhoneNumber, String newProfilePicturePath) {
-        if (newPhoneNumber != null && !newPhoneNumber.isEmpty()) {
-            this.phoneNumber = newPhoneNumber;
+    public boolean checkInfo(User editedUser) {
+        // Έλεγχος εγκυρότητας: π.χ. email format, κενά πεδία κλπ
+        if (editedUser.getEmail() == null || !editedUser.getEmail().contains("@")) {
+            return false;
         }
-        if (newProfilePicturePath != null && !newProfilePicturePath.isEmpty()) {
-            this.profilePicturePath = newProfilePicturePath;
-        }
-        System.out.println("Τα στοιχεία του προφίλ ενημερώθηκαν με επιτυχία.");
+        return true;
     }
 
-     // Getters (προαιρετικά)
+    public boolean saveEditedProfile(User editedUser) {
+        return db.updateProfile(editedUser);
+    }
+
+    public void ConfUpdateScreen() {
+        System.out.println("Profile updated successfully.");
+    }
+
+    public void InvalidDataScreen() {
+        System.out.println("Invalid input. Please try again.");
+    }
 }
-

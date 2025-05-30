@@ -1,44 +1,33 @@
-public class AdminManageClass extends User{
+import java.util.List;
 
-    private String username;
-    private String password;
-    private String adminInfo; 
+public class AdminManageClass {
+    private DataBaseManager db = new DataBaseManager();
 
-    // === CREDENTIALS ===
-
-    public void setCredentials(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public boolean checkCredentials(String user, String pass) {
+        return db.checkAdminCredentials(user, pass);
     }
 
-    public String[] getCredentials() {
-        return new String[]{username, password};
+    public boolean validateFieldInfo(String info) {
+        return db.validateEntry(info);
     }
 
-    public boolean checkCredentials(String inputUser, String inputPass) {
-        return this.username.equals(inputUser) && this.password.equals(inputPass);
+    public boolean submitField(String info) {
+        return db.submitEntry(info);
     }
 
-    // === INFO MANAGEMENT ===
-
-    public void setInfo(String info) {
-        this.adminInfo = info;
+    public List<String> getAvailableFields() {
+        return db.queryEntryList();
     }
 
-    public String getInfo() {
-        return adminInfo;
+    public boolean updateField(int id, String newInfo) {
+        return db.updateFieldInfo(id, newInfo);
     }
 
-    public boolean checkInfo(String value) {
-        return adminInfo != null && adminInfo.contains(value);
+    public void SuccessEntryScreen() {
+        System.out.println("Το γήπεδο καταχωρήθηκε επιτυχώς.");
     }
 
-    public void changeInfo(String newInfo) {
-        this.adminInfo = newInfo;
-    }
-
-    public void getEntryInfo() {
-        // TODO: Fetch or display entry info related to admin
+    public void SuccessEditScreen() {
+        System.out.println("Η επεξεργασία γηπέδου ολοκληρώθηκε.");
     }
 }
-

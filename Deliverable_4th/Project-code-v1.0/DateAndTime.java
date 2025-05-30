@@ -1,20 +1,15 @@
-import java.time.LocalDate;
-import java.time.LocalTime;
-
-public class DateAndTimeScreen extends ManageDateAndTimeClass {
-
-
-    public DateAndTimeScreen() {
-        super(); // κλήση του constructor της υπερκλάσης
-    }
+public class DateAndTime {
+    private ManageDateAndTime manager = new ManageDateAndTime();
 
     public void display() {
-        System.out.println("Reservation Date: " + setDate());
-        System.out.println("Reservation Time: " + setTime());
+        System.out.println("Οθόνη επιλογής ημερομηνίας & ώρας");
     }
 
-    public void showResults() {
-        // Π.χ. εμφάνιση αποτελεσμάτων κρατήσεων για την ημερομηνία/ώρα
-        super.showResults();
+    public void setDate(String date) {
+        manager.setDate(date);
+    }
+
+    public void setTime(String time) {
+        manager.setTime(time);
     }
 }
