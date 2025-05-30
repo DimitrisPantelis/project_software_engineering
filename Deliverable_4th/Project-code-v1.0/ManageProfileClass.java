@@ -1,24 +1,15 @@
 public class ManageProfileClass {
     private DataBaseManager db = new DataBaseManager();
 
-    public boolean submitProfileAccess(int userId) {
-        // Πιθανόν logging/αρχικοποίηση
-        return true;
-    }
-
     public User getEditProfile(int userId) {
         return db.queryEditProfile(userId);
     }
 
-    public boolean checkInfo(User editedUser) {
-        // Έλεγχος εγκυρότητας: π.χ. email format, κενά πεδία κλπ
-        if (editedUser.getEmail() == null || !editedUser.getEmail().contains("@")) {
-            return false;
-        }
+    public boolean setInfo(User editedUser) {
         return true;
     }
 
-    public boolean saveEditedProfile(User editedUser) {
+    public boolean getEditedProfile(User editedUser) {
         return db.updateProfile(editedUser);
     }
 

@@ -1,17 +1,45 @@
 import java.util.List;
 
 public class AdminManageClass {
-    private DataBaseManager db = new DataBaseManager();
+    private int id;
+    private String name;
+    private String password;
+    private String address;
+    private String email;
 
-    public boolean checkCredentials(String user, String pass) {
-        return db.checkAdminCredentials(user, pass);
+    public AdminManageClass(int id, String name, String password, String address, String email) {
+        this.id = id;
+        this.name = name;
+        this.password = password;
+        this.address = address;
+        this.email = email;
     }
 
-    public boolean validateFieldInfo(String info) {
+    private DataBaseManager db = new DataBaseManager();
+
+    public String getCredentials(String name, String password) {
+        return db.queryAdminLoginForm();
+    }
+
+    public boolean setCredentials() {
+        return db.checkAdminCredentials(name, password);
+    }
+
+    public boolean checkInfo(String info) {
         return db.validateEntry(info);
     }
 
-    public boolean submitField(String info) {
+    public void setChoice(String action, Field field) {
+        if (action.equalsIgnoreCase("insert")) {
+            db.insertNewField(field);
+        } else if (action.equalsIgnoreCase("edit")) {
+            db.updateField(field);
+        } else {
+            System.out.println("Άγνωστη ενέργεια: " + action);
+        }
+    }
+
+    public boolean getEntryInfo(String info) {
         return db.submitEntry(info);
     }
 
@@ -19,7 +47,7 @@ public class AdminManageClass {
         return db.queryEntryList();
     }
 
-    public boolean updateField(int id, String newInfo) {
+    public boolean changeInfo(int id, String newInfo) {
         return db.updateFieldInfo(id, newInfo);
     }
 

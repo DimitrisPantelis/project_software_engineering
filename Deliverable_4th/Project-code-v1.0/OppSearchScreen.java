@@ -7,7 +7,7 @@ public class OppSearchScreen {
         System.out.println("Αναζήτηση για διαθέσιμους αντιπάλους...");
     }
 
-    public List<String> getOppoBookingList() {
-        return manager.getAvailableBookings();
+    public List<String> getOppBookingList() {
+        return manager.getOppBooking();
     }
 }

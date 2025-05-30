@@ -8,6 +8,6 @@ public class MyBookingsScreen {
     }
 
     public List<String> getBookings(int userId) {
-        return manager.getBookings(userId); // dummy επιστροφή
+        return manager.getBookings(userId);
     }
 }

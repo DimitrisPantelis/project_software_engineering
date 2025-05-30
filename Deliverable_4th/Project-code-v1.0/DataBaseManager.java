@@ -18,6 +18,20 @@ public class DataBaseManager {
         return username.equals("admin") && password.equals("1234");
     }
 
+    public String queryAdminLoginForm() {
+        AdminLogin adminLoginScreen = new AdminLogin();
+        adminLoginScreen.display();
+        return "Success";
+    }
+
+    public void insertNewField(Field newField) {
+        System.out.println("Το νέο γήπεδο προστέθηκε στη βάση δεδομένων: " + newField.getName());
+    }
+
+    public void updateField(Field updatedField) {
+        System.out.println("Το γήπεδο ενημερώθηκε στη βάση δεδομένων: " + updatedField.getName());
+    }
+
     public List<String> querySport() {
         return Arrays.asList("Soccer", "Basketball", "Tennis");
     }
@@ -51,6 +65,11 @@ public class DataBaseManager {
     public List<String> queryBookings(String userId) {
         // Normally filtered by userId
         return new ArrayList<>(bookings.values());
+    }
+
+    public List<Booking> showBookingResults() {
+        List<Booking> bookings = new ArrayList<>();
+        return bookings;
     }
 
     public String queryBookingDetails(int bookingId) {
@@ -149,7 +168,7 @@ public class DataBaseManager {
 
     public List<Card> queryCardDetails(int userId) {
         // Επιστρέφει κάρτες για έναν χρήστη
-        return List.of(new Card("1111222233334444", "123"));
+        return List.of();
     }
 
     public boolean updatePaymentStatus(int bookingId, String status) {
@@ -171,26 +190,23 @@ public class DataBaseManager {
         return false;
     }
 
-    public List<Pin> queryPins() {
-        // Mock pins
-        return List.of(new Pin(/* ... */));
-    }
-
-    public Field queryPinInfo(int pinId) {
-        return new Field("...", "...", "...", "...");
+    public List<String> queryPins() {
+        return List.of();
     }
 
     public String queryMoreInfo(int fieldId) {
         return "Locker room, Parking, Open hours: 9am–11pm";
     }
 
-    public Route queryRoute(Location from, Field to) {
-        return new Route("Head north on Main Street, then turn right...");
+    public String queryLocation(String from, Field to) {
+        return ("The route is like that: ..");
     }
 
-    public List<Field> queryResults(String search) {
-        return List.of(
-                new Field(1, "Court A", "Address A", "Tennis"),
-                new Field(2, "Court B", "Address B", "Football"));
+    public String queryPinInfo(int pinId) {
+        return ("Show pin info");
+    }
+
+    public List<Field> queryResults(String query) {
+        throw new UnsupportedOperationException("Unimplemented method 'queryResults'");
     }
 }

@@ -1,15 +1,18 @@
 import java.util.List;
 
 public class ManageOpponent {
-    public List<String> getAvailableBookings() {
-        return List.of("Booking 101", "Booking 102");
+
+    private DataBaseManager db = new DataBaseManager();
+
+    public List<String> getOppBooking() {
+        return db.queryOppBookings();
     }
 
     public String getParticipationForm(int bookingId) {
         return "Form for booking #" + bookingId;
     }
 
-    public boolean setCompleted(int bookingId, int count) {
+    public boolean changeStatus(int bookingId, int count) {
         System.out.println("Συμμετοχή ολοκληρώθηκε για " + count + " άτομα.");
         return true;
     }

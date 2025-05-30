@@ -4,6 +4,18 @@ public class ManageBooking {
     private int userId;
     private String bookingDetails;
     private String currentDay;
+    private List<Booking> currentBookings;
+    private DataBaseManager db;
+
+    public void setBookings() {
+        List<Booking> newBookings = db.showBookingResults();
+        currentBookings = newBookings;
+
+        System.out.println("Οι κρατήσεις ενημερώθηκαν:");
+        for (Booking booking : currentBookings) {
+            System.out.println("- " + booking.getTitle() + " (" + booking.getDate() + ")");
+        }
+    }
 
     public List<String> getBookings(int userId) {
         return List.of("Κράτηση 1", "Κράτηση 2");

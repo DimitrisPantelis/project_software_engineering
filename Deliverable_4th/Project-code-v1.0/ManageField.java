@@ -10,13 +10,11 @@ public class ManageField {
         this.searchBar = searchBar;
     }
 
-    public void querySport(String sport) {
+    public void getSport(String sport) {
         System.out.println("Αναζήτηση για άθλημα: " + sport);
-        // Π.χ. κάνει fetch από DB
     }
 
-    public String[] queryFields() {
-        // Π.χ. simulate αποτελέσματα
+    public String[] getFields() {
         if ("Άδειο".equals(searchBar)) {
             return new String[0];
         }

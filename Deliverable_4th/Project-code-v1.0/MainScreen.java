@@ -8,6 +8,6 @@ public class MainScreen {
     public void chooseSport(String sport) {
         fieldsScreen = new FieldsScreen();
         fieldsScreen.display();
-        fieldsScreen.getSport(sport);
+        fieldsScreen.setSport(sport);
     }
 }

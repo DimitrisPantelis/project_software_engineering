@@ -1,37 +1,36 @@
-import java.util.List;
-
 public class TournManageClass {
-    private DataBaseManager db = new DataBaseManager();
+    private int id;
+    private String tournName;
+    private String region;
+    private String date;
+    private String time;
 
-    public List<String> getTournaments() {
-        return db.queryTournaments();
+    public TournManageClass(int id, String tournName, String region, String date, String time) {
+        this.id = id;
+        this.tournName = tournName;
+        this.region = region;
+        this.date = date;
+        this.time = time;
     }
 
-    public boolean submitTournamentChoice(int tournId, int userId) {
-        return db.submitTournamentParticipation(tournId, userId);
+    public void getTournaments() {
+        System.out.println("Ανάκτηση διαθέσιμων τουρνουά...");
     }
 
-    public boolean addToNotificationList(int userId) {
-        return db.addUserToTournamentNotifyList(userId);
+    public void setChoice(int selectedId) {
+        this.id = selectedId;
+        System.out.println("Επιλέχθηκε τουρνουά με ID: " + selectedId);
     }
 
-    public boolean checkIfAlreadyParticipated(int tournId, int userId) {
-        return db.checkTournamentParticipation(tournId, userId);
+    public void setDetails(String tournName, String region, String date, String time) {
+        this.tournName = tournName;
+        this.region = region;
+        this.date = date;
+        this.time = time;
+        System.out.println("Ενημερώθηκαν τα στοιχεία τουρνουά.");
     }
 
-    public boolean checkTournamentDetails(Tournament tournament) {
-        return tournament.getName() != null && tournament.getDate() != null;
-    }
-
-    public void NoAvailTournScreen() {
-        System.out.println("No tournaments available.");
-    }
-
-    public void ParticipationTournament() {
-        System.out.println("Thank you for participating.");
-    }
-
-    public void AlreadyPartScreen() {
-        System.out.println("You are already registered in this tournament.");
+    public String getInfo() {
+        return "Τουρνουά: " + tournName + " | Περιοχή: " + region + " | Ημερομηνία: " + date + " | Ώρα: " + time;
     }
 }

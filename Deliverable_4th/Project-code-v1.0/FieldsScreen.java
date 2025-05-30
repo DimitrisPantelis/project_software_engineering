@@ -5,13 +5,13 @@ public class FieldsScreen {
         System.out.println("Οθόνη γηπέδων.");
     }
 
-    public void getSport(String sport) {
-        manager.querySport(sport);
+    public void setSport(String sport) {
+        manager.getSport(sport);
         getFields();
     }
 
     public void getFields() {
-        String[] fields = manager.queryFields();
+        String[] fields = manager.getFields();
         showResults(fields);
     }
 

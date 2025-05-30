@@ -1,53 +1,79 @@
-import java.util.List;
-
-import javax.smartcardio.Card;
+import model.PaymentStatus;
 
 public class ManagePayment {
+
+    // Attributes
+    private int id;
+    private int userId;
+    private int bookingId;
+    private double prize;
+    private PaymentStatus status;
+    private String dateAndTime;
+
+    private String paymentMethod;
     private String cardDetails;
-    private boolean isCash;
-    private String savedCard;
+    private String email;
 
-    private DataBaseManager db = new DataBaseManager();
+    // Constructor
+    public ManagePayment(int id, int userId, int bookingId, double prize, String dateAndTime) {
+        this.id = id;
+        this.userId = userId;
+        this.bookingId = bookingId;
+        this.prize = prize;
+        this.dateAndTime = dateAndTime;
+        this.status = PaymentStatus.PENDING; // default status
+    }
 
-    public void setCard(String cardDetails) {
+    // Setters
+    public void setMethod(String method) {
+        this.paymentMethod = method;
+    }
+
+    public void setCardDetails(String cardDetails) {
         this.cardDetails = cardDetails;
-        this.isCash = false;
     }
 
-    public void setCash() {
-        this.isCash = true;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public void confirmPayment() {
-        System.out.println("Πληρωμή " + (isCash ? "με μετρητά" : "με κάρτα: " + cardDetails));
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
     }
 
-    public void setSavedCards(String savedCard) {
-        this.savedCard = savedCard;
+    // Getters
+    public String getPaymentMethod() {
+        return paymentMethod;
     }
 
-    public void SuccessfulPaymentScreen() {
-        System.out.println("Η πληρωμή ολοκληρώθηκε επιτυχώς.");
+    public String getCardDetails() {
+        return cardDetails;
     }
 
-    public List<Card> getCardDetails(int userId) {
-        return db.queryCardDetails(userId);
+    public String getEmail() {
+        return email;
     }
 
-    public boolean checkCardDetails(Card card) {
-        // Βασικός έλεγχος εγκυρότητας
-        return card.getNumber().length() == 16 && card.getCvv().length() == 3;
+    public PaymentStatus getStatus() {
+        return status;
     }
 
-    public boolean changePaymentStatus(int bookingId, String status) {
-        return db.updatePaymentStatus(bookingId, status);
+    public double getPrize() {
+        return prize;
     }
 
-    public boolean checkEmail(String email) {
-        return email != null && email.contains("@");
+    public String getDateAndTime() {
+        return dateAndTime;
     }
 
-    public void InvalidCardDetailsScreen() {
-        System.out.println("Invalid card details. Please recheck.");
+    // Example utility method
+    public void printPaymentInfo() {
+        System.out.println("Payment Info:");
+        System.out.println("- User ID: " + userId);
+        System.out.println("- Booking ID: " + bookingId);
+        System.out.println("- Prize: " + prize);
+        System.out.println("- Status: " + status);
+        System.out.println("- Method: " + paymentMethod);
+        System.out.println("- Email: " + email);
     }
 }

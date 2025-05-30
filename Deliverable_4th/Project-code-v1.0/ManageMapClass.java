@@ -1,11 +1,13 @@
+import java.util.List;
+
 public class ManageMapClass {
     private DataBaseManager db = new DataBaseManager();
 
-    public List<Pin> submit() {
+    public List<String> setChoice() {
         return db.queryPins();
     }
 
-    public Field getPinInfo(int pinId) {
+    public String getPinInfo(int pinId) {
         return db.queryPinInfo(pinId);
     }
 
@@ -13,8 +15,8 @@ public class ManageMapClass {
         return db.queryMoreInfo(fieldId);
     }
 
-    public Route getRoute(Location userLoc, Field destination) {
-        return db.queryRoute(userLoc, destination);
+    public String getLocation(String userLoc, Field destination) {
+        return db.queryLocation(userLoc, destination);
     }
 
     public List<Field> searchFields(String query) {
